@@ -5,11 +5,9 @@
 package frc.robot;
 
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Commands.MoveArmToPositionCommand;
 import frc.robot.sim.PhysicsSim;
 
 public class Robot extends TimedRobot {
@@ -26,7 +24,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    CommandScheduler.getInstance().run(); 
+    CommandScheduler.getInstance().run();
 
     /*
      * This example of adding Limelight is very simple and may not be sufficient for on-field use.
@@ -39,7 +37,8 @@ public class Robot extends TimedRobot {
     if (kUseLimelight) {
       var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       if (llMeasurement != null) {
-        m_robotContainer.drivetrain.addVisionMeasurement(llMeasurement.pose, Utils.fpgaToCurrentTime(llMeasurement.timestampSeconds));
+        m_robotContainer.drivetrain.addVisionMeasurement(
+            llMeasurement.pose, Utils.fpgaToCurrentTime(llMeasurement.timestampSeconds));
       }
     }
   }
@@ -57,7 +56,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_robotContainer.drivetrain.seedFieldCentric();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-    
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
@@ -97,7 +96,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationInit() {
-    PhysicsSim.getInstance().addTalonSRX( m_robotContainer.arm.getArmController(), 0.001);
+    PhysicsSim.getInstance().addTalonSRX(m_robotContainer.arm.getArmController(), 0.001);
   }
 
   @Override
