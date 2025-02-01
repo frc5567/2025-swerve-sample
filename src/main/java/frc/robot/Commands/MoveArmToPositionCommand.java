@@ -9,8 +9,8 @@ public class MoveArmToPositionCommand extends Command {
   private final double m_targetPosition; // position in degrees
 
   public MoveArmToPositionCommand(RadialActuator armSubsystem, double targetPosition) {
-    this.m_armSubsystem = armSubsystem;
-    this.m_targetPosition = targetPosition;
+    m_armSubsystem = armSubsystem;
+    m_targetPosition = targetPosition;
     addRequirements(armSubsystem);
   }
 
