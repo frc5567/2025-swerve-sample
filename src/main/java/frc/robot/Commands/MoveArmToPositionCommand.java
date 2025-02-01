@@ -28,7 +28,7 @@ public class MoveArmToPositionCommand extends Command {
   public boolean isFinished() {
     // Finish when the arm is within a tolerance of the target position
     double currentPosition = m_armSubsystem.getArmPosition();
-    return Math.abs(currentPosition - m_targetPosition) < 3.0; // within 1 degree tolerance
+    return Math.abs(currentPosition - m_targetPosition) < 1.0; // within 1 degree tolerance
   }
 
   @Override

@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationInit() {
-    PhysicsSim.getInstance().addTalonSRX(m_robotContainer.arm.getArmController(), 0.001);
+    // PhysicsSim.getInstance().addTalonSRX(m_robotContainer.arm.getArmController(), 0.001);
   }
 
   @Override

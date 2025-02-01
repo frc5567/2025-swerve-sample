@@ -15,7 +15,7 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
 
   private TalonFX elevatorMotor;
   // 2 inch gear will cause 159.59 mm travel per rotation
-  private final double kDistanceInMillimetersPerRotation = 159.59;
+  private final double kDistanceInMillimetersPerRotation = 360;
 
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
@@ -47,7 +47,7 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    *
    * @return double representing millimeters of travel from 0 (starting position)
    */
-  private double getPositionInMillimeters() {
+  public double getPositionInMillimeters() {
     Angle curAngle = this.getPositionInRotations();
     double distance = curAngle.magnitude() * kDistanceInMillimetersPerRotation;
     return distance;
@@ -59,8 +59,13 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    *
    * @param distance The distance from origin to request the system to move. A setpoint.
    */
-  private void setPositionInMillimeters(double distance) {
+  public void setPositionInMillimeters(double distance) {
     double desiredRotations = distance / kDistanceInMillimetersPerRotation;
     elevatorMotor.setControl(m_positionVoltage.withPosition(desiredRotations));
+  }
+
+  /** stopMechanism will simply command the motor controller to not move any more. */
+  public void stopMechanism() {
+    elevatorMotor.set(0);
   }
 }
