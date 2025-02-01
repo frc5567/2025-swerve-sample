@@ -29,7 +29,8 @@ public class MoveLinearActuatorToDistance extends Command {
   public boolean isFinished() {
     // Finish when the arm is within a tolerance of the target position
     double currentPosition = m_elevatorSubsystem.getPositionInMillimeters();
-    System.out.println("Current Position: [" + currentPosition + "] Target Position: [" + m_targetPosition + "]");
+    System.out.println(
+        "Current Position: [" + currentPosition + "] Target Position: [" + m_targetPosition + "]");
     return Math.abs(currentPosition - m_targetPosition) < 2.0; // within 5mm tolerance
   }
 
