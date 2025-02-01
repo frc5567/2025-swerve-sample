@@ -16,12 +16,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.MoveArmToPositionCommand;
-import frc.robot.commands.StopArmCommand;
+import frc.robot.commands.MoveLinearActuatorToDistance;
+import frc.robot.commands.StopLinearActuatorCommand;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.RadialActuator;
+import frc.robot.subsystems.RadialLinearActuatorTalonFX;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -47,7 +47,7 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   // Named "ArmMechanism" in Tuner X.
-  public final RadialActuator arm = new RadialActuator(29);
+  public final RadialLinearActuatorTalonFX elevator = new RadialLinearActuatorTalonFX(29);
 
   /* Path follower */
   private final SendableChooser<Command> autoChooser;
@@ -63,9 +63,9 @@ public class RobotContainer {
   private void registerNamedCommands() {
     // Register Named Commands
     NamedCommands.registerCommand(
-        "MoveArmTo180PositionCommand", new MoveArmToPositionCommand(arm, 180));
+        "MoveArmTo180PositionCommand", new MoveLinearActuatorToDistance(elevator, 180));
     NamedCommands.registerCommand(
-        "MoveArmTo0PositionCommand", new MoveArmToPositionCommand(arm, 0));
+        "MoveArmTo0PositionCommand", new MoveLinearActuatorToDistance(elevator, 0));
   }
 
   private void configureBindings() {
@@ -118,9 +118,9 @@ public class RobotContainer {
     pilotController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // Toggle the arm position
-    pilotController.y().onTrue(new MoveArmToPositionCommand(arm, 180));
-    pilotController.x().onTrue(new MoveArmToPositionCommand(arm, 0));
-    pilotController.rightBumper().onTrue(new StopArmCommand(arm));
+    pilotController.y().onTrue(new MoveLinearActuatorToDistance(elevator, 180));
+    pilotController.x().onTrue(new MoveLinearActuatorToDistance(elevator, 0));
+    pilotController.rightBumper().onTrue(new StopLinearActuatorCommand(elevator));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
