@@ -1,10 +1,15 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /*
  * Sample class to approximate what needs to be done for a
@@ -13,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
  */
 public class RadialLinearActuatorTalonFX implements Subsystem {
 
-  private TalonFX elevatorMotor;
+  private TalonFX m_elevatorMotor;
   // 2 inch gear will cause 159.59 mm travel per rotation
   private final double kDistanceInMillimetersPerRotation = 360;
 
@@ -26,7 +31,7 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    * @param motorPort Can ID of the motor controller to be used within the subsystem
    */
   public RadialLinearActuatorTalonFX(int motorPort) {
-    elevatorMotor = new TalonFX(motorPort);
+    m_elevatorMotor = new TalonFX(motorPort);
   }
 
   /**
@@ -36,7 +41,7 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    * @return Angle object representing the rotations of the the motor
    */
   private Angle getPositionInRotations() {
-    StatusSignal<Angle> ssAngle = elevatorMotor.getPosition();
+    StatusSignal<Angle> ssAngle = m_elevatorMotor.getPosition();
     Angle rotations = ssAngle.getValue();
     return rotations;
   }
@@ -61,11 +66,49 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    */
   public void setPositionInMillimeters(double distance) {
     double desiredRotations = distance / kDistanceInMillimetersPerRotation;
-    elevatorMotor.setControl(m_positionVoltage.withPosition(desiredRotations));
+    m_elevatorMotor.setControl(m_positionVoltage.withPosition(desiredRotations));
   }
 
   /** stopMechanism will simply command the motor controller to not move any more. */
   public void stopMechanism() {
-    elevatorMotor.set(0);
+    m_elevatorMotor.set(0);
+  }
+
+  private void moveMechanism(VoltageOut voltage) {
+    m_elevatorMotor.setControl(voltage);
+  }
+
+  /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
+  private final SysIdRoutine m_sysIdRoutineActuator =
+      new SysIdRoutine(
+          new SysIdRoutine.Config(
+              null, // Use default ramp rate (1 V/s)
+              Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+              null, // Use default timeout (10 s)
+              // Log state with SignalLogger class
+              state -> {}),
+          new SysIdRoutine.Mechanism(
+              output -> m_elevatorMotor.setControl(new VoltageOut(output)), null, this));
+
+  /**
+   * Runs the SysId Quasistatic test in the given direction for the routine specified by {@link
+   * #m_sysIdRoutineToApply}.
+   *
+   * @param direction Direction of the SysId Quasistatic test
+   * @return Command to run
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineActuator.quasistatic(direction);
+  }
+
+  /**
+   * Runs the SysId Dynamic test in the given direction for the routine specified by {@link
+   * #m_sysIdRoutineToApply}.
+   *
+   * @param direction Direction of the SysId Dynamic test
+   * @return Command to run
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutineActuator.dynamic(direction);
   }
 }

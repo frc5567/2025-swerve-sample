@@ -114,6 +114,25 @@ public class RobotContainer {
         .and(pilotController.x())
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
+    // Run SysId routines when holding back/start and A/B.
+    // Note that each routine should be run exactly once in a single log.
+    pilotController
+        .back()
+        .and(pilotController.b())
+        .whileTrue(elevator.sysIdDynamic(Direction.kForward));
+    pilotController
+        .back()
+        .and(pilotController.a())
+        .whileTrue(elevator.sysIdDynamic(Direction.kReverse));
+    pilotController
+        .start()
+        .and(pilotController.b())
+        .whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
+    pilotController
+        .start()
+        .and(pilotController.a())
+        .whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
+
     // reset the field-centric heading on left bumper press
     pilotController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
