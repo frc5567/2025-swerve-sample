@@ -6,11 +6,9 @@ import frc.robot.subsystems.RadialActuator;
 public class StopArmCommand extends Command {
 
   private final RadialActuator armSubsystem;
-  private final double speed; // speed to rotate
 
   public StopArmCommand(RadialActuator armSubsystem) {
     this.armSubsystem = armSubsystem;
-    this.speed = 0;
     addRequirements(armSubsystem);
   }
 
