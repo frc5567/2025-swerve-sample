@@ -31,7 +31,7 @@ public class MoveLinearActuatorToDistance extends Command {
     double currentPosition = m_elevatorSubsystem.getPositionInMillimeters();
     System.out.println(
         "Current Position: [" + currentPosition + "] Target Position: [" + m_targetPosition + "]");
-    return Math.abs(currentPosition - m_targetPosition) < 2.0; // within 5mm tolerance
+    return Math.abs(currentPosition - m_targetPosition) < 0.5; // within 5mm tolerance
   }
 
   @Override

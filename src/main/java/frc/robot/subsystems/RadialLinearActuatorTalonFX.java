@@ -2,10 +2,14 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -25,6 +29,16 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
 
+  private static final Slot0Configs actuatorGains =
+      new Slot0Configs()
+          .withKP(2.5)
+          .withKI(0)
+          .withKD(0)
+          .withKS(0.001)
+          .withKV(0.11)
+          .withKA(0.003)
+          .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
+
   /**
    * Base constructor for the sybsystem. Utilizes a Phoenix 6 Talon FX for motion
    *
@@ -32,6 +46,10 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    */
   public RadialLinearActuatorTalonFX(int motorPort) {
     m_elevatorMotor = new TalonFX(motorPort);
+    TalonFXConfiguration configs = new TalonFXConfiguration();
+    configs.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
+    configs.withSlot0(actuatorGains);
+    m_elevatorMotor.getConfigurator().apply(configs);
   }
 
   /**
@@ -83,10 +101,10 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
       new SysIdRoutine(
           new SysIdRoutine.Config(
               null, // Use default ramp rate (1 V/s)
-              Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+              Volts.of(2), // Reduce dynamic step voltage to 4 V to prevent brownout
               null, // Use default timeout (10 s)
               // Log state with SignalLogger class
-              state -> {}),
+              state -> SignalLogger.writeString("SysIdActuator_State", state.toString())),
           new SysIdRoutine.Mechanism(
               output -> m_elevatorMotor.setControl(new VoltageOut(output)), null, this));
 
