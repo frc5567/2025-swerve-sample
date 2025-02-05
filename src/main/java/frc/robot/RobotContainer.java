@@ -10,7 +10,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -86,6 +85,7 @@ public class RobotContainer {
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
+    /*
     pilotController.a().whileTrue(drivetrain.applyRequest(() -> brake));
     pilotController
         .b()
@@ -94,6 +94,7 @@ public class RobotContainer {
                 () ->
                     point.withModuleDirection(
                         new Rotation2d(-pilotController.getLeftY(), -pilotController.getLeftX()))));
+    */
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -113,6 +114,25 @@ public class RobotContainer {
         .start()
         .and(pilotController.x())
         .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+    // Run SysId routines when holding back/start and A/B.
+    // Note that each routine should be run exactly once in a single log.
+    pilotController
+        .back()
+        .and(pilotController.b())
+        .whileTrue(elevator.sysIdDynamic(Direction.kForward));
+    pilotController
+        .back()
+        .and(pilotController.a())
+        .whileTrue(elevator.sysIdDynamic(Direction.kReverse));
+    pilotController
+        .start()
+        .and(pilotController.b())
+        .whileTrue(elevator.sysIdQuasistatic(Direction.kForward));
+    pilotController
+        .start()
+        .and(pilotController.a())
+        .whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
 
     // reset the field-centric heading on left bumper press
     pilotController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
