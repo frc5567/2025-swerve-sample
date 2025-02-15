@@ -6,9 +6,12 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,16 +23,19 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  * radial actuator or elevator that is controlling
  * something that ends up moving linearly
  */
-public class RadialLinearActuatorTalonFX implements Subsystem {
+public class ElevatorSubsystem implements Subsystem {
 
   private TalonFX m_elevatorMotor;
-  // 2 inch gear will cause 159.59 mm travel per rotation
-  private final double kDistanceInMillimetersPerRotation = 360;
+  private double m_positionOffset = 27.711426;
+
+  // sprocket 2.638 inch diameter 8.2875 inches circumference, 210.5mm per rotation of lower stage.
+  // Total travel of scoring mechanism is double that at 411mm per rotation.
+  private final double kDistanceInMillimetersPerRotation = 4.11;
 
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
 
-  private static final Slot0Configs actuatorGains =
+  private static final Slot0Configs elevatorGains =
       new Slot0Configs()
           .withKP(2.5)
           .withKI(0)
@@ -44,12 +50,16 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    *
    * @param motorPort Can ID of the motor controller to be used within the subsystem
    */
-  public RadialLinearActuatorTalonFX(int motorPort) {
+  public ElevatorSubsystem(int motorPort) {
     m_elevatorMotor = new TalonFX(motorPort);
+
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
-    configs.withSlot0(actuatorGains);
+    configs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    configs.withSlot0(elevatorGains);
     m_elevatorMotor.getConfigurator().apply(configs);
+
+    m_elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   /**
@@ -61,6 +71,9 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
   private Angle getPositionInRotations() {
     StatusSignal<Angle> ssAngle = m_elevatorMotor.getPosition();
     Angle rotations = ssAngle.getValue();
+
+    Angle offset = Angle.ofRelativeUnits(m_positionOffset, edu.wpi.first.units.Units.Rotations);
+    rotations = rotations.plus(offset);
     return rotations;
   }
 
@@ -85,6 +98,12 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
   public void setPositionInMillimeters(double distance) {
     double desiredRotations = distance / kDistanceInMillimetersPerRotation;
     m_elevatorMotor.setControl(m_positionVoltage.withPosition(desiredRotations));
+    System.out.println(
+        "Setting position to ["
+            + distance
+            + "] mm Currently ["
+            + this.getPositionInMillimeters()
+            + "] mm");
   }
 
   /** stopMechanism will simply command the motor controller to not move any more. */
@@ -92,19 +111,19 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
     m_elevatorMotor.set(0);
   }
 
-  private void moveMechanism(VoltageOut voltage) {
-    m_elevatorMotor.setControl(voltage);
+  public void moveMechanism(DutyCycleOut pctPower) {
+    m_elevatorMotor.setControl(pctPower);
   }
 
   /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
-  private final SysIdRoutine m_sysIdRoutineActuator =
+  private final SysIdRoutine m_sysIdRoutineElevator =
       new SysIdRoutine(
           new SysIdRoutine.Config(
               null, // Use default ramp rate (1 V/s)
               Volts.of(2), // Reduce dynamic step voltage to 4 V to prevent brownout
               null, // Use default timeout (10 s)
               // Log state with SignalLogger class
-              state -> SignalLogger.writeString("SysIdActuator_State", state.toString())),
+              state -> SignalLogger.writeString("SysIdElevator_State", state.toString())),
           new SysIdRoutine.Mechanism(
               output -> m_elevatorMotor.setControl(new VoltageOut(output)), null, this));
 
@@ -116,7 +135,7 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    * @return Command to run
    */
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutineActuator.quasistatic(direction);
+    return m_sysIdRoutineElevator.quasistatic(direction);
   }
 
   /**
@@ -127,6 +146,6 @@ public class RadialLinearActuatorTalonFX implements Subsystem {
    * @return Command to run
    */
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return m_sysIdRoutineActuator.dynamic(direction);
+    return m_sysIdRoutineElevator.dynamic(direction);
   }
 }

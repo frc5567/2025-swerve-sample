@@ -1,15 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.RadialLinearActuatorTalonFX;
+import frc.robot.subsystems.ElevatorSubsystem;
 
-public class MoveLinearActuatorToDistance extends Command {
+public class MoveElevatorToPosition extends Command {
 
-  private final RadialLinearActuatorTalonFX m_elevatorSubsystem;
+  private final ElevatorSubsystem m_elevatorSubsystem;
   private final double m_targetPosition; // distance from start in millimeters
 
-  public MoveLinearActuatorToDistance(
-      RadialLinearActuatorTalonFX elevatorSubsystem, double targetPosition) {
+  public MoveElevatorToPosition(ElevatorSubsystem elevatorSubsystem, double targetPosition) {
     m_elevatorSubsystem = elevatorSubsystem;
     m_targetPosition = targetPosition;
     addRequirements(elevatorSubsystem);
@@ -31,7 +30,7 @@ public class MoveLinearActuatorToDistance extends Command {
     double currentPosition = m_elevatorSubsystem.getPositionInMillimeters();
     System.out.println(
         "Current Position: [" + currentPosition + "] Target Position: [" + m_targetPosition + "]");
-    return Math.abs(currentPosition - m_targetPosition) < 0.5; // within 5mm tolerance
+    return Math.abs(currentPosition - m_targetPosition) < 3; // within 5mm tolerance
   }
 
   @Override
