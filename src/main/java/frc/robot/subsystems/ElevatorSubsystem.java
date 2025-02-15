@@ -26,17 +26,28 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 public class ElevatorSubsystem implements Subsystem {
 
   private TalonFX m_elevatorMotor;
-  private double m_positionOffset = 27.711426;
 
-  // sprocket 2.638 inch diameter 8.2875 inches circumference, 210.5mm per rotation of lower stage.
-  // Total travel of scoring mechanism is double that at 411mm per rotation.
-  // Gear Ratio is 40:1
-  // 411 / 40 = 10.275mm per rotation of motor
-  private final double kDistanceInMillimetersPerRotation = 10.275;
+  /* Position offset to account for the starting position of the elevator */
+  private double m_positionOffset = -0.011230;
+
+  /**
+   * kDistanceInMillimetersPerRotation is the distance the elevator travels per rotation of the
+   * motor. This is calculated by the circumference of the sprocket multiplied by the gear ratio.
+   *
+   * <p>Sprocket has 2.638 inch diameter (so multiplied by pi) 8.2875 inches circumference. That
+   * converts to 210.5mm per rotation of lower stage. Total travel of scoring mechanism is double
+   * that at 411mm per rotation (since both stages move together and proportionally the same
+   * distance) Gear Ratio is 40:1 411 / 40 = 10.275mm of travel per rotation of motor
+   */
+  private final double kDistanceInMillimetersPerRotation = 10.477;
 
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
 
+  /**
+   * Elevator gains for default slot 0. Note that these values were not tuned and are just
+   * placeholders
+   */
   private static final Slot0Configs elevatorGains =
       new Slot0Configs()
           .withKP(2.5)
@@ -50,18 +61,16 @@ public class ElevatorSubsystem implements Subsystem {
   /**
    * Base constructor for the sybsystem. Utilizes a Phoenix 6 Talon FX for motion
    *
-   * @param motorPort Can ID of the motor controller to be used within the subsystem
+   * @param motorPort CAN ID of the motor controller to be used within the subsystem
    */
   public ElevatorSubsystem(int motorPort) {
     m_elevatorMotor = new TalonFX(motorPort);
 
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
-    configs.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     configs.withSlot0(elevatorGains);
     m_elevatorMotor.getConfigurator().apply(configs);
-
-    m_elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   /**
@@ -81,7 +90,7 @@ public class ElevatorSubsystem implements Subsystem {
    *
    * @return Angle object representing the rotations of the the motor
    */
-  private Angle getPositionInRotations() {
+  public Angle getPositionInRotations() {
     StatusSignal<Angle> ssAngle = m_elevatorMotor.getPosition();
     Angle rotations = ssAngle.getValue();
 
@@ -119,16 +128,28 @@ public class ElevatorSubsystem implements Subsystem {
             + "] mm");
   }
 
-  /** stopMechanism will simply command the motor controller to not move any more. */
+  /** stopMechanism stops the elevator motor from moving */
   public void stopMechanism() {
     m_elevatorMotor.set(0);
   }
 
+  /**
+   * moveMechanism moves the elevator motor at the specified power (DutyCycle -- ie fractional value
+   * from -1 to 1)
+   *
+   * @param pctPower Value between -1 and 1 that represents the percent power to the motor
+   */
   public void moveMechanism(DutyCycleOut pctPower) {
+    System.out.println("Setting power to [" + pctPower.Output + "]");
     m_elevatorMotor.setControl(pctPower);
   }
 
-  /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
+  /**
+   * SysId routine for characterizing the elevator. This is used to find PID gains for the elevator
+   * motor. This is the Template routine which will be called either for Dynamic or Quasistatic
+   * testing. Output is written to the CTRE Signal Logger Details here:
+   * https://v6.docs.ctr-electronics.com/en/stable/docs/api-reference/wpilib-integration/sysid-integration/index.html
+   */
   private final SysIdRoutine m_sysIdRoutineElevator =
       new SysIdRoutine(
           new SysIdRoutine.Config(

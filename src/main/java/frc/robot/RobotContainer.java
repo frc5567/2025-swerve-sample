@@ -44,7 +44,8 @@ public class RobotContainer {
 
   private final CommandXboxController pilotController = new CommandXboxController(0);
 
-  private final DutyCycleOut output = new DutyCycleOut(0.0);
+  private final DutyCycleOut upOutput = new DutyCycleOut(0.0);
+  private final DutyCycleOut downOutput = new DutyCycleOut(0.0);
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -141,10 +142,11 @@ public class RobotContainer {
     pilotController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // Toggle the arm position
-    pilotController.y().whileTrue(new MoveElevator(elevator, output.withOutput(0.4)));
-    pilotController.x().whileTrue(new MoveElevator(elevator, output.withOutput(-0.4)));
+    pilotController.y().onTrue(new MoveElevatorToPosition(elevator, 600));
 
-    pilotController.rightBumper().onTrue(new StopElevatorCommand(elevator));
+    pilotController.x().onTrue(new MoveElevatorToPosition(elevator, 1000));
+
+    pilotController.rightBumper().onTrue(new MoveElevatorToPosition(elevator, 0));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

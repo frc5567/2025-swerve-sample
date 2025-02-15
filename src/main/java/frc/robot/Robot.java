@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -16,6 +18,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+
+  private int m_outputCounter = 0;
 
   // TODO: Set this to true in order to use the limelight
   private final boolean kUseLimelight = false;
@@ -27,6 +31,14 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+    m_outputCounter++;
+    if (m_outputCounter >= 50) {
+      m_outputCounter = 0;
+      Angle curAngle = m_robotContainer.elevator.getPositionInRotations();
+      double curPos = curAngle.magnitude();
+      double curDist = m_robotContainer.elevator.getPositionInMillimeters();
+      System.out.println("Elevator Position: Rotations [" + curPos + "] Distance in mm [" + curDist + "]");
+    }
 
     /*
      * This example of adding Limelight is very simple and may not be sufficient for on-field use.
