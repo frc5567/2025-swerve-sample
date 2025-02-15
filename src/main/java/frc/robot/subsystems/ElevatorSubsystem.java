@@ -30,7 +30,9 @@ public class ElevatorSubsystem implements Subsystem {
 
   // sprocket 2.638 inch diameter 8.2875 inches circumference, 210.5mm per rotation of lower stage.
   // Total travel of scoring mechanism is double that at 411mm per rotation.
-  private final double kDistanceInMillimetersPerRotation = 4.11;
+  // Gear Ratio is 40:1
+  // 411 / 40 = 10.275mm per rotation of motor
+  private final double kDistanceInMillimetersPerRotation = 10.275;
 
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
@@ -60,6 +62,17 @@ public class ElevatorSubsystem implements Subsystem {
     m_elevatorMotor.getConfigurator().apply(configs);
 
     m_elevatorMotor.setNeutralMode(NeutralModeValue.Brake);
+  }
+
+  /**
+   * setBrakeMode sets the brake mode of the motor controller to either coast or brake. Need to
+   * expose this so we can set it to coast in disabledInit so the elevator can be manually
+   * controlled when the bot is disabled.
+   *
+   * @param mode the NeutralModeValue to set the motor controller to
+   */
+  public void setBrakeMode(NeutralModeValue mode) {
+    m_elevatorMotor.setNeutralMode(mode);
   }
 
   /**

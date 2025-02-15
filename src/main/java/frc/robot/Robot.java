@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -45,7 +46,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Coast);
+  }
 
   @Override
   public void disabledPeriodic() {}
@@ -61,6 +64,10 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    // We want the elevator to be able to be manually controlled when the robot is disabled
+    // but it needs to be in Brake mode when enabled so it holds position when being driven.
+    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -78,6 +85,10 @@ public class Robot extends TimedRobot {
     }
 
     SignalLogger.start();
+
+    // We want the elevator to be able to be manually controlled when the robot is disabled
+    // but it needs to be in Brake mode when enabled so it holds position when being driven.
+    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -91,6 +102,10 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
+
+    // We want the elevator to be able to be manually controlled when the robot is disabled
+    // but it needs to be in Brake mode when enabled so it holds position when being driven.
+    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override

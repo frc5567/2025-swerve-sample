@@ -17,9 +17,7 @@ public class MoveElevator extends Command {
   }
 
   @Override
-  public void initialize() {
-    // You could add logic to smooth the movement if necessary
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
