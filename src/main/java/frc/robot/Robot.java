@@ -7,7 +7,6 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,7 +36,8 @@ public class Robot extends TimedRobot {
       Angle curAngle = m_robotContainer.elevator.getPositionInRotations();
       double curPos = curAngle.magnitude();
       double curDist = m_robotContainer.elevator.getPositionInMillimeters();
-      System.out.println("Elevator Position: Rotations [" + curPos + "] Distance in mm [" + curDist + "]");
+      System.out.println(
+          "Elevator Position: Rotations [" + curPos + "] Distance in mm [" + curDist + "]");
     }
 
     /*
