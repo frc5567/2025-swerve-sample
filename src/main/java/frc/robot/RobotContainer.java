@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -14,13 +15,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.MoveLinearActuatorToDistance;
-import frc.robot.commands.StopLinearActuatorCommand;
+import frc.robot.commands.MoveElevator;
+import frc.robot.commands.MoveElevatorToPosition;
+import frc.robot.commands.StopElevatorCommand;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.RadialLinearActuatorTalonFX;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -43,10 +44,12 @@ public class RobotContainer {
 
   private final CommandXboxController pilotController = new CommandXboxController(0);
 
+  private final DutyCycleOut output = new DutyCycleOut(0.0);
+
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   // Named "ArmMechanism" in Tuner X.
-  public final RadialLinearActuatorTalonFX elevator = new RadialLinearActuatorTalonFX(29);
+  public final ElevatorSubsystem elevator = new ElevatorSubsystem(29);
 
   /* Path follower */
   private final SendableChooser<Command> autoChooser;
@@ -61,10 +64,8 @@ public class RobotContainer {
 
   private void registerNamedCommands() {
     // Register Named Commands
-    NamedCommands.registerCommand(
-        "MoveArmTo180PositionCommand", new MoveLinearActuatorToDistance(elevator, 180));
-    NamedCommands.registerCommand(
-        "MoveArmTo0PositionCommand", new MoveLinearActuatorToDistance(elevator, 0));
+    NamedCommands.registerCommand("MoveElevatorTo180", new MoveElevatorToPosition(elevator, 180));
+    NamedCommands.registerCommand("MoveElevatorTo0", new MoveElevatorToPosition(elevator, 0));
   }
 
   private void configureBindings() {
@@ -96,6 +97,7 @@ public class RobotContainer {
                         new Rotation2d(-pilotController.getLeftY(), -pilotController.getLeftX()))));
     */
 
+    /*
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
     pilotController
@@ -133,14 +135,16 @@ public class RobotContainer {
         .start()
         .and(pilotController.a())
         .whileTrue(elevator.sysIdQuasistatic(Direction.kReverse));
+    */
 
     // reset the field-centric heading on left bumper press
     pilotController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // Toggle the arm position
-    pilotController.y().onTrue(new MoveLinearActuatorToDistance(elevator, 180));
-    pilotController.x().onTrue(new MoveLinearActuatorToDistance(elevator, 0));
-    pilotController.rightBumper().onTrue(new StopLinearActuatorCommand(elevator));
+    pilotController.y().whileTrue(new MoveElevator(elevator, output.withOutput(0.4)));
+    pilotController.x().whileTrue(new MoveElevator(elevator, output.withOutput(-0.4)));
+
+    pilotController.rightBumper().onTrue(new StopElevatorCommand(elevator));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
