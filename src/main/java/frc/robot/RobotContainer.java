@@ -15,11 +15,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.IntakeCoralCommand;
+import frc.robot.commands.LaunchCoralCommand;
 import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LauncherAngleSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -44,11 +48,14 @@ public class RobotContainer {
 
   private final DutyCycleOut upOutput = new DutyCycleOut(0.0);
   private final DutyCycleOut downOutput = new DutyCycleOut(0.0);
+  private final DutyCycleOut intakeOutput = new DutyCycleOut(0.0);
+  private final DutyCycleOut launchOutput = new DutyCycleOut(0.0);
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  // Named "ArmMechanism" in Tuner X.
-  public final ElevatorSubsystem elevator = new ElevatorSubsystem(29);
+  // public final ElevatorSubsystem m_elevator = new ElevatorSubsystem(29);
+  public final LauncherSubsystem m_launcher = new LauncherSubsystem(30);
+  public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem(31);
 
   /* Path follower */
   private final SendableChooser<Command> autoChooser;
@@ -63,8 +70,8 @@ public class RobotContainer {
 
   private void registerNamedCommands() {
     // Register Named Commands
-    NamedCommands.registerCommand("MoveElevatorTo180", new MoveElevatorToPosition(elevator, 180));
-    NamedCommands.registerCommand("MoveElevatorTo0", new MoveElevatorToPosition(elevator, 0));
+    // NamedCommands.registerCommand("MoveElevatorTo180", new MoveElevatorToPosition(elevator, 180));
+    // NamedCommands.registerCommand("MoveElevatorTo0", new MoveElevatorToPosition(elevator, 0));
   }
 
   private void configureBindings() {
@@ -140,11 +147,15 @@ public class RobotContainer {
     pilotController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // Toggle the arm position
-    pilotController.y().onTrue(new MoveElevatorToPosition(elevator, 600));
+    // pilotController.y().onTrue(new MoveElevatorToPosition(elevator, 600));
 
-    pilotController.x().onTrue(new MoveElevatorToPosition(elevator, 1000));
+    // pilotController.x().onTrue(new MoveElevatorToPosition(elevator, 1000));
 
-    pilotController.rightBumper().onTrue(new MoveElevatorToPosition(elevator, 0));
+    // pilotController.rightBumper().onTrue(new MoveElevatorToPosition(elevator, 0));
+
+    // Test controls for the Launcher
+    pilotController.y().onTrue(new IntakeCoralCommand(m_launcher, intakeOutput.withOutput(-0.2)));
+    pilotController.x().onTrue(new LaunchCoralCommand(m_launcher, intakeOutput.withOutput(0.2)));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
