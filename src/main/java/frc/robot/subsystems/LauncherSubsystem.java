@@ -10,7 +10,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -50,13 +49,12 @@ public class LauncherSubsystem implements Subsystem {
   }
 
   /**
-   * haveCoral will return the state of the coral sensor.
-   * It should return true if the sensor is triggered indicating we have a coral
+   * haveCoral will return the state of the coral sensor. It should return true if the sensor is
+   * triggered indicating we have a coral
    */
   public boolean haveCoral() {
     return m_coralSensor.get();
   }
-
 
   /**
    * stopClimberWinch will stop the climberWinch motor regardless prior calls.

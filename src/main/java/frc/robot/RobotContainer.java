@@ -10,18 +10,15 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.LaunchCoralCommand;
-import frc.robot.commands.MoveElevatorToPosition;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LauncherAngleSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 
@@ -70,7 +67,8 @@ public class RobotContainer {
 
   private void registerNamedCommands() {
     // Register Named Commands
-    // NamedCommands.registerCommand("MoveElevatorTo180", new MoveElevatorToPosition(elevator, 180));
+    // NamedCommands.registerCommand("MoveElevatorTo180", new MoveElevatorToPosition(elevator,
+    // 180));
     // NamedCommands.registerCommand("MoveElevatorTo0", new MoveElevatorToPosition(elevator, 0));
   }
 

@@ -14,8 +14,8 @@ public class IntakeCoralCommand extends Command {
   private final DutyCycleOut m_pctPower;
 
   /**
-   * Primary constructor for the IntakeCoralCommand command. Requires the LauncherSubsystem object be
-   * passed in since there should only be one instance of that.
+   * Primary constructor for the IntakeCoralCommand command. Requires the LauncherSubsystem object
+   * be passed in since there should only be one instance of that.
    *
    * @param launcher The one instance of the launcher object
    * @param pctPower The power to run the motor at -- should be Duty Cycle (-1 to 1)
