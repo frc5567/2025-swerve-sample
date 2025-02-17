@@ -19,6 +19,7 @@ import frc.robot.commands.LaunchCoralCommand;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LauncherAngleSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 
@@ -50,7 +51,7 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  // public final ElevatorSubsystem m_elevator = new ElevatorSubsystem(29);
+  public final ElevatorSubsystem m_elevator = new ElevatorSubsystem(29);
   public final LauncherSubsystem m_launcher = new LauncherSubsystem(30);
   public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem(31);
 
