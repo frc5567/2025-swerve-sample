@@ -6,8 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -30,15 +28,15 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    m_outputCounter++;
-    if (m_outputCounter >= 50) {
-      m_outputCounter = 0;
-      Angle curAngle = m_robotContainer.elevator.getPositionInRotations();
-      double curPos = curAngle.magnitude();
-      double curDist = m_robotContainer.elevator.getPositionInMillimeters();
-      System.out.println(
-          "Elevator Position: Rotations [" + curPos + "] Distance in mm [" + curDist + "]");
-    }
+    // m_outputCounter++;
+    // if (m_outputCounter >= 50) {
+    //   m_outputCounter = 0;
+    //   Angle curAngle = m_robotContainer.m_elevator.getPositionInRotations();
+    //   double curPos = curAngle.magnitude();
+    //   double curDist = m_robotContainer.m_elevator.getPositionInMillimeters();
+    //   System.out.println(
+    //       "Elevator Position: Rotations [" + curPos + "] Distance in mm [" + curDist + "]");
+    // }
 
     /*
      * This example of adding Limelight is very simple and may not be sufficient for on-field use.
@@ -59,7 +57,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Coast);
+    // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Coast);
   }
 
   @Override
@@ -79,7 +77,7 @@ public class Robot extends TimedRobot {
 
     // We want the elevator to be able to be manually controlled when the robot is disabled
     // but it needs to be in Brake mode when enabled so it holds position when being driven.
-    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Brake);
+    // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -100,7 +98,7 @@ public class Robot extends TimedRobot {
 
     // We want the elevator to be able to be manually controlled when the robot is disabled
     // but it needs to be in Brake mode when enabled so it holds position when being driven.
-    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Brake);
+    // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -117,7 +115,7 @@ public class Robot extends TimedRobot {
 
     // We want the elevator to be able to be manually controlled when the robot is disabled
     // but it needs to be in Brake mode when enabled so it holds position when being driven.
-    m_robotContainer.elevator.setBrakeMode(NeutralModeValue.Brake);
+    // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override
