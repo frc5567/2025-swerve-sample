@@ -21,7 +21,7 @@ public class LauncherAngleSubsystem implements Subsystem {
 
   // 5:1 ratio
   // total travel is 2.9166667
-  // 
+  //
   private final double kDistanceInPercentPerRotation = 0.3428;
   private final double kOffset = 0.432617;
 

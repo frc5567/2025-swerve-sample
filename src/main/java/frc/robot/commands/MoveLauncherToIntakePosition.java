@@ -1,10 +1,7 @@
 package frc.robot.commands;
 
-import com.ctre.phoenix6.StatusSignal;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LauncherAngleSubsystem;
 
 public class MoveLauncherToIntakePosition extends Command {
@@ -33,7 +30,8 @@ public class MoveLauncherToIntakePosition extends Command {
     // Finish when the arm is within a tolerance of the target position
     Angle rotations = m_launchAngle.getPositionInRotations();
     double currentPosition = rotations.magnitude();
-    System.out.println("Current Position: [" + currentPosition + "] Target Position: [" + m_targetPosition + "]");
+    System.out.println(
+        "Current Position: [" + currentPosition + "] Target Position: [" + m_targetPosition + "]");
     return Math.abs(currentPosition - m_targetPosition) < 0.02; // within 5mm tolerance
   }
 

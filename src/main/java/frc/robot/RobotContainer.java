@@ -14,14 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.IntakeCoralCommand;
-import frc.robot.commands.LaunchCoralCommand;
 import frc.robot.commands.MoveLauncherToIntakePosition;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.LauncherAngleSubsystem;
-import frc.robot.subsystems.LauncherSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -52,7 +49,7 @@ public class RobotContainer {
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
   // public final ElevatorSubsystem m_elevator = new ElevatorSubsystem(29);
-  //public final LauncherSubsystem m_launcher = new LauncherSubsystem(30);
+  // public final LauncherSubsystem m_launcher = new LauncherSubsystem(30);
   public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem(31);
 
   /* Path follower */
@@ -155,7 +152,8 @@ public class RobotContainer {
     // Test controls for the Launcher
     // pilotController.y().whileTrue(new IntakeCoralCommand(m_launcher, intakeOutput.withOutput(-0.0
     // 2)));
-    // pilotController.x().whileTrue(new LaunchCoralCommand(m_launcher, launchOutput.withOutput(0.2)));
+    // pilotController.x().whileTrue(new LaunchCoralCommand(m_launcher,
+    // launchOutput.withOutput(0.2)));
 
     // Test controls for the LauncherAngle mechanism
     pilotController.y().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle, 0.0));

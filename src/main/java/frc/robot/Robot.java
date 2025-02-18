@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,8 +34,7 @@ public class Robot extends TimedRobot {
       m_outputCounter = 0;
       Angle curAngle = m_robotContainer.m_launcherAngle.getPositionInRotations();
       double output = curAngle.magnitude();
-      System.out.println(
-          "Launcher Position: Rotations [" + output + "]");
+      System.out.println("Launcher Position: Rotations [" + output + "]");
     }
 
     /*
