@@ -53,7 +53,7 @@ public class LauncherSubsystem implements Subsystem {
    * triggered indicating we have a coral
    */
   public boolean haveCoral() {
-    return m_coralSensor.get();
+    return !m_coralSensor.get();
   }
 
   /**
