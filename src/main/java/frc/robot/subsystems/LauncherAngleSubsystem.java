@@ -19,10 +19,11 @@ public class LauncherAngleSubsystem implements Subsystem {
 
   private TalonFX m_launcherAngleMotor;
 
-  // 40:1 ratio -- 2.25 rotations of output shaft for total travel
-  // so 90 complete rotations for complete travel
-  // complete travel is "100%" so one motor turn is 1.1111% of travel
-  private final double kDistanceInPercentPerRotation = 1.1111;
+  // 5:1 ratio
+  // total travel is 2.9166667
+  //
+  private final double kDistanceInPercentPerRotation = 0.3428;
+  private final double kOffset = 0.432617;
 
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
@@ -31,11 +32,6 @@ public class LauncherAngleSubsystem implements Subsystem {
   private static final Slot0Configs launcherAngleGains =
       new Slot0Configs()
           .withKP(2.5)
-          .withKI(0)
-          .withKD(0)
-          .withKS(0.001)
-          .withKV(0.11)
-          .withKA(0.003)
           .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
   /**
@@ -46,7 +42,7 @@ public class LauncherAngleSubsystem implements Subsystem {
   public LauncherAngleSubsystem(int motorPort) {
     m_launcherAngleMotor = new TalonFX(motorPort);
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
+    configs.Voltage.withPeakForwardVoltage(Volts.of(5)).withPeakReverseVoltage(Volts.of(-5));
     configs.withSlot0(launcherAngleGains);
     m_launcherAngleMotor.getConfigurator().apply(configs);
   }
@@ -57,9 +53,11 @@ public class LauncherAngleSubsystem implements Subsystem {
    *
    * @return Angle object representing the rotations of the the motor
    */
-  private Angle getPositionInRotations() {
+  public Angle getPositionInRotations() {
     StatusSignal<Angle> ssAngle = m_launcherAngleMotor.getPosition();
     Angle rotations = ssAngle.getValue();
+    Angle offset = Angle.ofRelativeUnits(kOffset, edu.wpi.first.units.Units.Rotations);
+    rotations = rotations.plus(offset);
     return rotations;
   }
 
@@ -82,9 +80,8 @@ public class LauncherAngleSubsystem implements Subsystem {
    * @param distance The distance from origin to request the system to move in percentage of total
    *     travel. A setpoint.
    */
-  public void setPositionInPercentTravel(double distance) {
-    double desiredRotations = distance / kDistanceInPercentPerRotation;
-    m_launcherAngleMotor.setControl(m_positionVoltage.withPosition(desiredRotations));
+  public void setPositionInRotations(double rotations) {
+    m_launcherAngleMotor.setControl(m_positionVoltage.withPosition(rotations));
   }
 
   /**
