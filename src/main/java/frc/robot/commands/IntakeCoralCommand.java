@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LauncherSubsystem;
 
 /**
- * Simple command to move the elevator manually for testing Utilizes the DutyCycleOut class to set
- * the power of the elevator motor
+ * Simple command to engage the launcher motor to intake a coral game piece. This command should
+ * automatically stop the motor once the game piece is seen by our sensor
  */
 public class IntakeCoralCommand extends Command {
 

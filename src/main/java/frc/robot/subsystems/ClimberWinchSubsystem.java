@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
+/**
+ * ClimberWinchSubsystem is the subsystem that controls the climber winch motor for the robot. This
+ * subsystem is responsible for moving the motor to the correct position to climb the cage
+ */
 public class ClimberWinchSubsystem implements Subsystem {
 
   private TalonFX m_climberWinchMotor;
@@ -96,6 +100,11 @@ public class ClimberWinchSubsystem implements Subsystem {
     m_climberWinchMotor.set(0);
   }
 
+  /**
+   * moveClimberWinch will move the climber winch motor to the desired voltage.
+   *
+   * @param voltage The power to move the motor -- expressed in a value from -12 to 12.
+   */
   private void moveClimberWinch(VoltageOut voltage) {
     m_climberWinchMotor.setControl(voltage);
   }

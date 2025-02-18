@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.MoveLauncherToIntakePosition;
+import frc.robot.commands.MoveLauncherToPosition;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -156,8 +156,8 @@ public class RobotContainer {
     // launchOutput.withOutput(0.2)));
 
     // Test controls for the LauncherAngle mechanism
-    pilotController.y().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle, 0.0));
-    pilotController.x().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle, 1.8));
+    pilotController.y().whileTrue(new MoveLauncherToPosition(m_launcherAngle, 0.0));
+    pilotController.x().whileTrue(new MoveLauncherToPosition(m_launcherAngle, 1.8));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
