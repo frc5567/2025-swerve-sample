@@ -18,10 +18,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
-/*
- * Sample class to approximate what needs to be done for a
- * radial actuator or elevator that is controlling
- * something that ends up moving linearly
+/**
+ * ElevatorSubsystem is the subsystem that controls the elevator motor for the robot. This subsystem
+ * is responsible for moving the elevator to the correct position to score a coral game piece.
  */
 public class ElevatorSubsystem implements Subsystem {
 
