@@ -53,7 +53,8 @@ public class RobotContainer {
 
   // public final ElevatorSubsystem m_elevator = new ElevatorSubsystem(29);
   // public final LauncherSubsystem m_launcher = new LauncherSubsystem(30);
-  public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem(31);
+  public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem();
+  // public final ClimberWinchSubsystem m_climberWinch = new ClimberWinchSubsystem();
 
   /* Path follower */
   private final SendableChooser<Command> m_autoChooser;
@@ -165,6 +166,8 @@ public class RobotContainer {
     m_pilotController.y().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle));
     m_pilotController.x().whileTrue(new MoveLauncherToLaunchPosition(m_launcherAngle));
     m_pilotController.rightBumper().whileTrue(new MoveLauncherToStartPosition(m_launcherAngle));
+
+    // m_pilotController.a().whileTrue(new ClimbCommand(m_climberWinch));
 
     m_drivetrain.registerTelemetry(m_logger::telemeterize);
   }

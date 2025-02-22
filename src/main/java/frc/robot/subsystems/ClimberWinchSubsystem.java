@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotMap;
 
 /**
  * ClimberWinchSubsystem is the subsystem that controls the climber winch motor for the robot. This
@@ -25,8 +26,7 @@ public class ClimberWinchSubsystem implements Subsystem {
 
   // 40:1 ratio -- 2.25 rotations of output shaft for total travel
   // so 90 complete rotations for complete travel
-  // complete travel is "100%" so one motor turn is 1.1111% of travel
-  private final double kDistanceInPercentPerRotation = 1.1111;
+  // Start position is 0 rotations
 
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
@@ -45,10 +45,10 @@ public class ClimberWinchSubsystem implements Subsystem {
   /**
    * Base constructor for the sybsystem. Utilizes a Phoenix 6 Talon FX for motion
    *
-   * @param motorPort Can ID of the motor controller to be used within the subsystem
+   * <p>Takes no parameters, as the motor port is defined in the RobotMap
    */
-  public ClimberWinchSubsystem(int motorPort) {
-    m_climberWinchMotor = new TalonFX(motorPort);
+  public ClimberWinchSubsystem() {
+    m_climberWinchMotor = new TalonFX(RobotMap.ClimberConstants.CLIMBER_WINCH_MOTOR_PORT);
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
     configs.withSlot0(climberWinchGains);
@@ -61,33 +61,27 @@ public class ClimberWinchSubsystem implements Subsystem {
    *
    * @return Angle object representing the rotations of the the motor
    */
-  private Angle getPositionInRotations() {
+  public Angle getPositionInRotations() {
     StatusSignal<Angle> ssAngle = m_climberWinchMotor.getPosition();
     Angle rotations = ssAngle.getValue();
+    System.out.print("Climber Position: Rotations [" + rotations.magnitude() + "]");
+    Angle offset =
+        Angle.ofRelativeUnits(
+            RobotMap.ClimberConstants.OFFSET, edu.wpi.first.units.Units.Rotations);
+    rotations = rotations.plus(offset);
+    System.out.println("Offset Rotations [" + rotations.magnitude() + "]");
     return rotations;
-  }
-
-  /**
-   * getPositionInPercentTravel returns the current position of the system in terms of percentage of
-   * total possible travel since initialization.
-   *
-   * @return double representing percentage of travel from 0 (starting position)
-   */
-  public double getPositionInPercentTravel() {
-    Angle curAngle = this.getPositionInRotations();
-    double distance = curAngle.magnitude() * kDistanceInPercentPerRotation;
-    return distance;
   }
 
   /**
    * setPositionInPercentTravel drives the subsystem to the target position. We will translate to
    * rotations to set the control using a PositionVoltage object.
    *
-   * @param distance The distance from origin to request the system to move in percentage of total
-   *     travel. A setpoint.
+   * @param rotations The distance from origin to request the system to move in rotations. A
+   *     setpoint.
    */
-  public void setPositionInPercentTravel(double distance) {
-    double desiredRotations = distance / kDistanceInPercentPerRotation;
+  public void setPositionInRotations(double rotations) {
+    double desiredRotations = rotations - RobotMap.ClimberConstants.OFFSET;
     m_climberWinchMotor.setControl(m_positionVoltage.withPosition(desiredRotations));
   }
 

@@ -39,7 +39,7 @@ public class MoveLauncherToStartPosition extends Command {
    */
   @Override
   public void execute() {
-    m_launchAngle.setPositionInRotations(RobotMap.AngleMotorConstants.LAUNCH_ROTATION_COUNT);
+    m_launchAngle.setPositionInRotations(RobotMap.AngleMotorConstants.INITIAL_ROTATION_COUNT);
   }
 
   /**

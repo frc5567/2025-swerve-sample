@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotMap;
 
 /**
  * LauncherAngleSubsystem is the subsystem that controls the launcher angle motor for the robot.
@@ -32,9 +33,6 @@ public class LauncherAngleSubsystem implements Subsystem {
   // Intake position is 60 degrees, or 7.5 motor rotations
   // Launch position is 120 degrees, or 15 motor rotations
 
-  private final double kDistanceInPercentPerRotation = 0.3428;
-  private final double kOffset = 0.432617;
-
   /* Start at position 0, use slot 0 */
   private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
 
@@ -47,12 +45,12 @@ public class LauncherAngleSubsystem implements Subsystem {
   /**
    * Base constructor for the sybsystem. Utilizes a Phoenix 6 Talon FX for motion
    *
-   * @param motorPort Can ID of the motor controller to be used within the subsystem
+   * <p>Takes no parameters, as the motor port is defined in the RobotMap
    */
-  public LauncherAngleSubsystem(int motorPort) {
-    m_launcherAngleMotor = new TalonFX(motorPort);
+  public LauncherAngleSubsystem() {
+    m_launcherAngleMotor = new TalonFX(RobotMap.AngleMotorConstants.LAUNCHER_ANGLE_MOTOR_PORT);
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Voltage.withPeakForwardVoltage(Volts.of(5)).withPeakReverseVoltage(Volts.of(-5));
+    configs.Voltage.withPeakForwardVoltage(Volts.of(4)).withPeakReverseVoltage(Volts.of(-4));
     configs.withSlot0(launcherAngleGains);
     m_launcherAngleMotor.getConfigurator().apply(configs);
   }
@@ -77,8 +75,12 @@ public class LauncherAngleSubsystem implements Subsystem {
   public Angle getPositionInRotations() {
     StatusSignal<Angle> ssAngle = m_launcherAngleMotor.getPosition();
     Angle rotations = ssAngle.getValue();
-    Angle offset = Angle.ofRelativeUnits(kOffset, edu.wpi.first.units.Units.Rotations);
+    System.out.print("Launcher Position: Rotations [" + rotations.magnitude() + "]");
+    Angle offset =
+        Angle.ofRelativeUnits(
+            RobotMap.AngleMotorConstants.OFFSET, edu.wpi.first.units.Units.Rotations);
     rotations = rotations.plus(offset);
+    System.out.println("Offset Rotations [" + rotations.magnitude() + "]");
     return rotations;
   }
 
@@ -89,6 +91,7 @@ public class LauncherAngleSubsystem implements Subsystem {
    * @param rotations The rotations to request the system to move. A setpoint.
    */
   public void setPositionInRotations(double rotations) {
+    rotations -= RobotMap.AngleMotorConstants.OFFSET;
     m_launcherAngleMotor.setControl(m_positionVoltage.withPosition(rotations));
   }
 
