@@ -50,7 +50,7 @@ public class LauncherAngleSubsystem implements Subsystem {
   public LauncherAngleSubsystem() {
     m_launcherAngleMotor = new TalonFX(RobotMap.AngleMotorConstants.LAUNCHER_ANGLE_MOTOR_PORT);
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Voltage.withPeakForwardVoltage(Volts.of(4)).withPeakReverseVoltage(Volts.of(-4));
+    configs.Voltage.withPeakForwardVoltage(Volts.of(2)).withPeakReverseVoltage(Volts.of(-2));
     configs.withSlot0(launcherAngleGains);
     m_launcherAngleMotor.getConfigurator().apply(configs);
   }

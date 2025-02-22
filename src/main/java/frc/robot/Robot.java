@@ -7,10 +7,14 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.LimelightHelpers.PoseEstimate;
@@ -30,8 +34,11 @@ public class Robot extends TimedRobot {
 
   private PoseEstimate m_curPoseEstimate;
 
+  private final Field2d m_field;
+
   public Robot() {
     m_robotContainer = new RobotContainer();
+    m_field = new Field2d();
   }
 
   @Override
@@ -45,6 +52,9 @@ public class Robot extends TimedRobot {
     } else {
       System.out.println("Alliance is unknown.");
     }
+
+    // Do this in either robot or subsystem init
+    SmartDashboard.putData("Field", m_field);
   }
 
   @Override
@@ -77,6 +87,11 @@ public class Robot extends TimedRobot {
         m_robotContainer.m_drivetrain.addVisionMeasurement(
             m_curPoseEstimate.pose, Utils.fpgaToCurrentTime(m_curPoseEstimate.timestampSeconds));
       }
+    }
+    double curTime = Utils.getCurrentTimeSeconds();
+    Optional<Pose2d> curPose = m_robotContainer.m_drivetrain.samplePoseAt(curTime);
+    if (curPose.isPresent()) {
+      m_field.setRobotPose(curPose.get());
     }
   }
 
