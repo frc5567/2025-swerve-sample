@@ -15,14 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.climber.ClimbCommand;
-import frc.robot.commands.launcherAngleMechanism.MoveLauncherToIntakePosition;
-import frc.robot.commands.launcherAngleMechanism.MoveLauncherToLaunchPosition;
-import frc.robot.commands.launcherAngleMechanism.MoveLauncherToStartPosition;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimberWinchSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LauncherAngleSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =

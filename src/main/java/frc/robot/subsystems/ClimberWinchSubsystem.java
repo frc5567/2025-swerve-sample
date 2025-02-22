@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -50,8 +51,9 @@ public class ClimberWinchSubsystem implements Subsystem {
   public ClimberWinchSubsystem() {
     m_climberWinchMotor = new TalonFX(RobotMap.ClimberConstants.CLIMBER_WINCH_MOTOR_PORT);
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    configs.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
+    configs.Voltage.withPeakForwardVoltage(Volts.of(2)).withPeakReverseVoltage(Volts.of(-2));
     configs.withSlot0(climberWinchGains);
+    configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     m_climberWinchMotor.getConfigurator().apply(configs);
   }
 

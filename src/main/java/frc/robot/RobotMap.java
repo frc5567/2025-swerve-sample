@@ -24,7 +24,7 @@ public class RobotMap {
   public static final class ClimberConstants {
     public static final int CLIMBER_WINCH_MOTOR_PORT = 32;
 
-    public static final double OFFSET = 0.0;
+    public static final double OFFSET = -5.281250;
 
     public static final double INITIAL_ROTATION_COUNT = 0.1;
 
