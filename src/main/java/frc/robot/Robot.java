@@ -80,9 +80,16 @@ public class Robot extends TimedRobot {
         m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       }
 
-      if (m_curPoseEstimate != null) {
+      if ((m_curPoseEstimate != null)
+          && !((m_curPoseEstimate.pose.getX() == 0) && (m_curPoseEstimate.pose.getY() == 0))) {
         m_robotContainer.m_drivetrain.addVisionMeasurement(
             m_curPoseEstimate.pose, Utils.fpgaToCurrentTime(m_curPoseEstimate.timestampSeconds));
+        // System.out.println(
+        //     "Robot saw an AprilTag and tried to adjust pose ["
+        //         + m_curPoseEstimate.pose.getX()
+        //         + "]["
+        //         + m_curPoseEstimate.pose.getX()
+        //         + "]");
       }
     }
     double curTime = Utils.getCurrentTimeSeconds();
