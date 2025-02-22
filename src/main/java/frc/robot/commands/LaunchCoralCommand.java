@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LauncherSubsystem;
 
 /**
- * Simple command to move the launcher manually for testing Utilizes the DutyCycleOut class to set
- * the power of the launcher motor
+ * Simple command to engage the launcher motor to expel a coral game piece. This command should
+ * eventually be changed to use a VelocityOut signal to control the motor speed.
  */
 public class LaunchCoralCommand extends Command {
 

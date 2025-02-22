@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
+/**
+ * LauncherSubsystem is the subsystem that controls the launcher motor for the robot. This subsystem
+ * is responsible for spinning the motor to launch a coral game piece.
+ */
 public class LauncherSubsystem implements Subsystem {
 
   private DigitalInput m_coralSensor;
