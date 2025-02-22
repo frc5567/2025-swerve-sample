@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.launcher;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;

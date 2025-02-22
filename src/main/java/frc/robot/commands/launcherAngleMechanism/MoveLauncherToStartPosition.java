@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.launcherAngleMechanism;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -6,11 +6,11 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.LauncherAngleSubsystem;
 
 /**
- * A command that moves the launcher to the intake position. The system has a 45:1 gear ratio, 8
- * degrees of output rotation per 360 degrees of motor rotation. Launch position is 120 degrees, or
- * 15 motor rotations
+ * A command that moves the launcher to the start position. The system has a 45:1 gear ratio, 8
+ * degrees of output rotation per 360 degrees of motor rotation. Start position is 0 degrees, or 0
+ * motor rotations
  */
-public class MoveLauncherToLaunchPosition extends Command {
+public class MoveLauncherToStartPosition extends Command {
 
   private final LauncherAngleSubsystem m_launchAngle;
 
@@ -19,7 +19,7 @@ public class MoveLauncherToLaunchPosition extends Command {
    *
    * @param launchAngle The launcher angle subsystem to use
    */
-  public MoveLauncherToLaunchPosition(LauncherAngleSubsystem launchAngle) {
+  public MoveLauncherToStartPosition(LauncherAngleSubsystem launchAngle) {
     m_launchAngle = launchAngle;
     addRequirements(launchAngle);
   }
@@ -56,9 +56,9 @@ public class MoveLauncherToLaunchPosition extends Command {
         "Current Position: ["
             + currentPosition
             + "] Target Position: ["
-            + RobotMap.AngleMotorConstants.LAUNCH_ROTATION_COUNT
+            + RobotMap.AngleMotorConstants.INITIAL_ROTATION_COUNT
             + "]");
-    return Math.abs(currentPosition - RobotMap.AngleMotorConstants.LAUNCH_ROTATION_COUNT)
+    return Math.abs(currentPosition - RobotMap.AngleMotorConstants.INITIAL_ROTATION_COUNT)
         < RobotMap.AngleMotorConstants.ROTATION_TOLERANCE;
   }
 
