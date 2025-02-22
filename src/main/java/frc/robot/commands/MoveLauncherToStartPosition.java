@@ -6,20 +6,20 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.LauncherAngleSubsystem;
 
 /**
- * A command that moves the launcher to the intake position. The system has a 45:1 gear ratio, 8
- * degrees of output rotation per 360 degrees of motor rotation. Intake position is 60 degrees, or
- * 7.5 motor rotations
+ * A command that moves the launcher to the start position. The system has a 45:1 gear ratio, 8
+ * degrees of output rotation per 360 degrees of motor rotation. Start position is 0 degrees, or 0
+ * motor rotations
  */
-public class MoveLauncherToIntakePosition extends Command {
+public class MoveLauncherToStartPosition extends Command {
 
   private final LauncherAngleSubsystem m_launchAngle;
 
   /**
-   * Creates a new MoveLauncherToIntakePosition command.
+   * Creates a new MoveLauncherToLaunchPosition command.
    *
    * @param launchAngle The launcher angle subsystem to use
    */
-  public MoveLauncherToIntakePosition(LauncherAngleSubsystem launchAngle) {
+  public MoveLauncherToStartPosition(LauncherAngleSubsystem launchAngle) {
     m_launchAngle = launchAngle;
     addRequirements(launchAngle);
   }
@@ -39,7 +39,7 @@ public class MoveLauncherToIntakePosition extends Command {
    */
   @Override
   public void execute() {
-    m_launchAngle.setPositionInRotations(RobotMap.AngleMotorConstants.INTAKE_ROTATION_COUNT);
+    m_launchAngle.setPositionInRotations(RobotMap.AngleMotorConstants.LAUNCH_ROTATION_COUNT);
   }
 
   /**
@@ -56,9 +56,9 @@ public class MoveLauncherToIntakePosition extends Command {
         "Current Position: ["
             + currentPosition
             + "] Target Position: ["
-            + RobotMap.AngleMotorConstants.INTAKE_ROTATION_COUNT
+            + RobotMap.AngleMotorConstants.INITIAL_ROTATION_COUNT
             + "]");
-    return Math.abs(currentPosition - RobotMap.AngleMotorConstants.INTAKE_ROTATION_COUNT)
+    return Math.abs(currentPosition - RobotMap.AngleMotorConstants.INITIAL_ROTATION_COUNT)
         < RobotMap.AngleMotorConstants.ROTATION_TOLERANCE;
   }
 

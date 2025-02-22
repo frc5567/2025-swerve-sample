@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
     if (kUseLimelight) {
       var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       if (llMeasurement != null) {
-        m_robotContainer.drivetrain.addVisionMeasurement(
+        m_robotContainer.m_drivetrain.addVisionMeasurement(
             llMeasurement.pose, Utils.fpgaToCurrentTime(llMeasurement.timestampSeconds));
       }
     }
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_robotContainer.drivetrain.seedFieldCentric();
+    m_robotContainer.m_drivetrain.seedFieldCentric();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.drivetrain.seedFieldCentric();
+    m_robotContainer.m_drivetrain.seedFieldCentric();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();

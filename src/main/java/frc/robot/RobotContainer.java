@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.MoveLauncherToIntakePosition;
+import frc.robot.commands.MoveLauncherToLaunchPosition;
+import frc.robot.commands.MoveLauncherToStartPosition;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -34,31 +36,32 @@ public class RobotContainer {
           .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+  private final SwerveRequest.SwerveDriveBrake m_brake = new SwerveRequest.SwerveDriveBrake();
+  private final SwerveRequest.PointWheelsAt m_point = new SwerveRequest.PointWheelsAt();
 
-  private final CommandXboxController pilotController = new CommandXboxController(0);
+  private final Telemetry m_logger = new Telemetry(MaxSpeed);
 
-  private final DutyCycleOut upOutput = new DutyCycleOut(0.0);
-  private final DutyCycleOut downOutput = new DutyCycleOut(0.0);
-  private final DutyCycleOut intakeOutput = new DutyCycleOut(0.0);
-  private final DutyCycleOut launchOutput = new DutyCycleOut(0.0);
+  private final CommandXboxController m_pilotController = new CommandXboxController(0);
 
-  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  private final DutyCycleOut m_upOutput = new DutyCycleOut(0.0);
+  private final DutyCycleOut m_downOutput = new DutyCycleOut(0.0);
+  private final DutyCycleOut m_intakeOutput = new DutyCycleOut(0.0);
+  private final DutyCycleOut m_launchOutput = new DutyCycleOut(0.0);
+
+  public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
 
   // public final ElevatorSubsystem m_elevator = new ElevatorSubsystem(29);
   // public final LauncherSubsystem m_launcher = new LauncherSubsystem(30);
   public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem(31);
 
   /* Path follower */
-  private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<Command> m_autoChooser;
 
   public RobotContainer() {
     registerNamedCommands();
-    autoChooser = AutoBuilder.buildAutoChooser("Tests");
-    SmartDashboard.putData("Auto Mode", autoChooser);
+    m_autoChooser = AutoBuilder.buildAutoChooser("Tests");
+    SmartDashboard.putData("Auto Mode", m_autoChooser);
 
     configureBindings();
   }
@@ -73,18 +76,19 @@ public class RobotContainer {
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
-    drivetrain.setDefaultCommand(
+    m_drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(
+        m_drivetrain.applyRequest(
             () ->
                 drive
                     .withVelocityX(
-                        -pilotController.getLeftY()
+                        -m_pilotController.getLeftY()
                             * MaxSpeed) // Drive forward with negative Y (forward)
                     .withVelocityY(
-                        -pilotController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        -m_pilotController.getLeftX()
+                            * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(
-                        -pilotController.getRightX()
+                        -m_pilotController.getRightX()
                             * MaxAngularRate) // Drive counterclockwise with negative X (left)
             ));
 
@@ -140,7 +144,9 @@ public class RobotContainer {
     */
 
     // reset the field-centric heading on left bumper press
-    pilotController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    m_pilotController
+        .leftBumper()
+        .onTrue(m_drivetrain.runOnce(() -> m_drivetrain.seedFieldCentric()));
 
     // Toggle the arm position
     // pilotController.y().onTrue(new MoveElevatorToPosition(elevator, 600));
@@ -156,14 +162,15 @@ public class RobotContainer {
     // launchOutput.withOutput(0.2)));
 
     // Test controls for the LauncherAngle mechanism
-    pilotController.y().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle, 0.0));
-    pilotController.x().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle, 1.8));
+    m_pilotController.y().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle));
+    m_pilotController.x().whileTrue(new MoveLauncherToLaunchPosition(m_launcherAngle));
+    m_pilotController.rightBumper().whileTrue(new MoveLauncherToStartPosition(m_launcherAngle));
 
-    drivetrain.registerTelemetry(logger::telemeterize);
+    m_drivetrain.registerTelemetry(m_logger::telemeterize);
   }
 
   public Command getAutonomousCommand() {
     /* Run the path selected from the auto chooser */
-    return autoChooser.getSelected();
+    return m_autoChooser.getSelected();
   }
 }

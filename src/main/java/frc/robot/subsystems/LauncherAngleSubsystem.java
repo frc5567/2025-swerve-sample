@@ -9,6 +9,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,9 +20,12 @@ public class LauncherAngleSubsystem implements Subsystem {
 
   private TalonFX m_launcherAngleMotor;
 
-  // 5:1 ratio
-  // total travel is 2.9166667
-  //
+  // 45:1 Gear ratio
+  // 8 degrees of output rotation per 360 degrees of motor rotation
+  // Starting position is 0 degrees
+  // Intake position is 60 degrees, or 7.5 motor rotations
+  // Launch position is 120 degrees, or 15 motor rotations
+
   private final double kDistanceInPercentPerRotation = 0.3428;
   private final double kOffset = 0.432617;
 
@@ -48,6 +52,17 @@ public class LauncherAngleSubsystem implements Subsystem {
   }
 
   /**
+   * setBrakeMode sets the brake mode of the motor controller to either coast or brake. Need to
+   * expose this so we can set it to coast in disabledInit so the launcherAngle can be manually
+   * controlled when the bot is disabled.
+   *
+   * @param mode the NeutralModeValue to set the motor controller to
+   */
+  public void setBrakeMode(NeutralModeValue mode) {
+    m_launcherAngleMotor.setNeutralMode(mode);
+  }
+
+  /**
    * getPositionInRotations returns the current position of the system in terms of rotations of the
    * motor/encoder since initialization.
    *
@@ -62,19 +77,7 @@ public class LauncherAngleSubsystem implements Subsystem {
   }
 
   /**
-   * getPositionInPercentTravel returns the current position of the system in terms of percentage of
-   * total possible travel since initialization.
-   *
-   * @return double representing percentage of travel from 0 (starting position)
-   */
-  public double getPositionInPercentTravel() {
-    Angle curAngle = this.getPositionInRotations();
-    double distance = curAngle.magnitude() * kDistanceInPercentPerRotation;
-    return distance;
-  }
-
-  /**
-   * setPositionInPercentTravel drives the subsystem to the target position. We will translate to
+   * setPositionInRotations drives the subsystem to the target position. We will translate to
    * rotations to set the control using a PositionVoltage object.
    *
    * @param distance The distance from origin to request the system to move in percentage of total
