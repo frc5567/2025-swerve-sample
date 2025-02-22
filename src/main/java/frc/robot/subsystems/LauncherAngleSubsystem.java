@@ -6,6 +6,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,6 +16,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
+/**
+ * LauncherAngleSubsystem is the subsystem that controls the launcher angle motor for the robot.
+ * This subsystem is responsible for moving the motor to the correct angle to launch a coral game
+ * piece.
+ */
 public class LauncherAngleSubsystem implements Subsystem {
 
   private TalonFX m_launcherAngleMotor;
@@ -22,7 +28,8 @@ public class LauncherAngleSubsystem implements Subsystem {
   // 5:1 ratio
   // total travel is 2.9166667
   //
-  private final double kDistanceInPercentPerRotation = 0.3428;
+  // TODO: measure the correct offset before using this value!!
+  // 0.432617 is the offset to get the motor to the zero position
   private final double kOffset = 0.432617;
 
   /* Start at position 0, use slot 0 */
@@ -62,30 +69,17 @@ public class LauncherAngleSubsystem implements Subsystem {
   }
 
   /**
-   * getPositionInPercentTravel returns the current position of the system in terms of percentage of
-   * total possible travel since initialization.
+   * setPositionInRotations drives the subsystem to the target position. We will use rotations to
+   * set the control using a PositionVoltage object.
    *
-   * @return double representing percentage of travel from 0 (starting position)
-   */
-  public double getPositionInPercentTravel() {
-    Angle curAngle = this.getPositionInRotations();
-    double distance = curAngle.magnitude() * kDistanceInPercentPerRotation;
-    return distance;
-  }
-
-  /**
-   * setPositionInPercentTravel drives the subsystem to the target position. We will translate to
-   * rotations to set the control using a PositionVoltage object.
-   *
-   * @param distance The distance from origin to request the system to move in percentage of total
-   *     travel. A setpoint.
+   * @param rotations The rotations to request the system to move. A setpoint.
    */
   public void setPositionInRotations(double rotations) {
     m_launcherAngleMotor.setControl(m_positionVoltage.withPosition(rotations));
   }
 
   /**
-   * stopClimberWinch will stop the climberWinch motor regardless prior calls.
+   * stopLauncherAngle will stop the climberWinch motor regardless prior calls.
    *
    * @return Does not return a value.
    */
@@ -93,8 +87,13 @@ public class LauncherAngleSubsystem implements Subsystem {
     m_launcherAngleMotor.set(0);
   }
 
-  private void moveLauncherAngle(VoltageOut voltage) {
-    m_launcherAngleMotor.setControl(voltage);
+  /**
+   * moveLauncherAngle will move the launcher angle motor to the desired voltage.
+   *
+   * @param output The power to move the motor -- expressed in a value from -1 to 1.
+   */
+  private void moveLauncherAngle(DutyCycleOut output) {
+    m_launcherAngleMotor.setControl(output);
   }
 
   /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
