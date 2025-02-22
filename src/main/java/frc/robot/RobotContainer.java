@@ -14,13 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.launcherAngleMechanism.MoveLauncherToIntakePosition;
-import frc.robot.commands.launcherAngleMechanism.MoveLauncherToLaunchPosition;
-import frc.robot.commands.launcherAngleMechanism.MoveLauncherToStartPosition;
+import frc.robot.commands.climber.ClimbCommand;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ClimberWinchSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.LauncherAngleSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -53,7 +51,8 @@ public class RobotContainer {
 
   // public final ElevatorSubsystem m_elevator = new ElevatorSubsystem(29);
   // public final LauncherSubsystem m_launcher = new LauncherSubsystem(30);
-  public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem(31);
+  // public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem();
+  public final ClimberWinchSubsystem m_climberWinch = new ClimberWinchSubsystem();
 
   /* Path follower */
   private final SendableChooser<Command> m_autoChooser;
@@ -162,9 +161,11 @@ public class RobotContainer {
     // launchOutput.withOutput(0.2)));
 
     // Test controls for the LauncherAngle mechanism
-    m_pilotController.y().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle));
-    m_pilotController.x().whileTrue(new MoveLauncherToLaunchPosition(m_launcherAngle));
-    m_pilotController.rightBumper().whileTrue(new MoveLauncherToStartPosition(m_launcherAngle));
+    // m_pilotController.y().whileTrue(new MoveLauncherToIntakePosition(m_launcherAngle));
+    // m_pilotController.x().whileTrue(new MoveLauncherToLaunchPosition(m_launcherAngle));
+    // m_pilotController.rightBumper().whileTrue(new MoveLauncherToStartPosition(m_launcherAngle));
+
+    m_pilotController.a().whileTrue(new ClimbCommand(m_climberWinch));
 
     m_drivetrain.registerTelemetry(m_logger::telemeterize);
   }

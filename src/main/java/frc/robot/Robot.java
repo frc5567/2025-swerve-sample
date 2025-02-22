@@ -6,11 +6,17 @@ package frc.robot;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import frc.robot.sim.PhysicsSim;
+import java.util.Optional;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -19,11 +25,33 @@ public class Robot extends TimedRobot {
 
   private int m_outputCounter = 0;
 
-  // TODO: Set this to true in order to use the limelight
-  private final boolean kUseLimelight = false;
+  private final boolean kUseLimelight = true;
+
+  private Optional<Alliance> m_alliance;
+
+  private PoseEstimate m_curPoseEstimate;
+
+  private final Field2d m_field;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    m_field = new Field2d();
+  }
+
+  @Override
+  public void robotInit() {
+    m_alliance = DriverStation.getAlliance();
+
+    if (m_alliance.get() == Alliance.Red) {
+      System.out.println("We are on the Red Alliance!");
+    } else if (m_alliance.get() == Alliance.Blue) {
+      System.out.println("We are on the Blue Alliance!");
+    } else {
+      System.out.println("Alliance is unknown.");
+    }
+
+    // Do this in either robot or subsystem init
+    SmartDashboard.putData("Field", m_field);
   }
 
   @Override
@@ -32,9 +60,9 @@ public class Robot extends TimedRobot {
     m_outputCounter++;
     if (m_outputCounter >= 50) {
       m_outputCounter = 0;
-      Angle curAngle = m_robotContainer.m_launcherAngle.getPositionInRotations();
-      double output = curAngle.magnitude();
-      System.out.println("Launcher Position: Rotations [" + output + "]");
+      // Angle curAngle = m_robotContainer.m_launcherAngle.getPositionInRotations();
+      // double output = curAngle.magnitude();
+      // System.out.println("Launcher Position: Rotations [" + output + "]");
     }
 
     /*
@@ -46,17 +74,31 @@ public class Robot extends TimedRobot {
      * of how to use vision should be tuned per-robot and to the team's specification.
      */
     if (kUseLimelight) {
-      var llMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-      if (llMeasurement != null) {
-        m_robotContainer.m_drivetrain.addVisionMeasurement(
-            llMeasurement.pose, Utils.fpgaToCurrentTime(llMeasurement.timestampSeconds));
+      if (m_alliance.get() == Alliance.Red) {
+        m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight");
+      } else if (m_alliance.get() == Alliance.Blue) {
+        m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
       }
+
+      if (m_curPoseEstimate != null) {
+        m_robotContainer.m_drivetrain.addVisionMeasurement(
+            m_curPoseEstimate.pose, Utils.fpgaToCurrentTime(m_curPoseEstimate.timestampSeconds));
+      }
+    }
+    double curTime = Utils.getCurrentTimeSeconds();
+    Optional<Pose2d> curPose = m_robotContainer.m_drivetrain.samplePoseAt(curTime);
+    if (curPose.isPresent()) {
+      m_field.setRobotPose(curPose.get());
     }
   }
 
   @Override
   public void disabledInit() {
+
+    // We want the mechanisms to be able to be manually controlled when the robot is disabled
     // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Coast);
+    // m_robotContainer.m_launcherAngle.setBrakeMode(NeutralModeValue.Coast);
+
   }
 
   @Override
@@ -67,6 +109,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+
+    m_alliance = DriverStation.getAlliance();
+
+    if (m_alliance.get() == Alliance.Red) {
+      System.out.println("We are on the Red Alliance!");
+    } else if (m_alliance.get() == Alliance.Blue) {
+      System.out.println("We are on the Blue Alliance!");
+    } else {
+      System.out.println("Alliance is unknown.");
+    }
+
     m_robotContainer.m_drivetrain.seedFieldCentric();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -74,9 +127,10 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    // We want the elevator to be able to be manually controlled when the robot is disabled
-    // but it needs to be in Brake mode when enabled so it holds position when being driven.
+    // We want the mechanisms to be able to be manually controlled when the robot is disabled
+    // but they need to be in Brake mode when enabled so it holds position when being driven.
     // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Brake);
+    // m_robotContainer.m_launcherAngle.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -93,11 +147,22 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
+    m_alliance = DriverStation.getAlliance();
+
+    if (m_alliance.get() == Alliance.Red) {
+      System.out.println("We are on the Red Alliance!");
+    } else if (m_alliance.get() == Alliance.Blue) {
+      System.out.println("We are on the Blue Alliance!");
+    } else {
+      System.out.println("Alliance is unknown.");
+    }
+
     SignalLogger.start();
 
-    // We want the elevator to be able to be manually controlled when the robot is disabled
-    // but it needs to be in Brake mode when enabled so it holds position when being driven.
+    // We want the mechanisms to be able to be manually controlled when the robot is disabled
+    // but they need to be in Brake mode when enabled so it holds position when being driven.
     // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Brake);
+    // m_robotContainer.m_launcherAngle.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -112,9 +177,19 @@ public class Robot extends TimedRobot {
   public void testInit() {
     CommandScheduler.getInstance().cancelAll();
 
-    // We want the elevator to be able to be manually controlled when the robot is disabled
-    // but it needs to be in Brake mode when enabled so it holds position when being driven.
+    m_alliance = DriverStation.getAlliance();
+    if (m_alliance.get() == Alliance.Red) {
+      System.out.println("We are on the Red Alliance!");
+    } else if (m_alliance.get() == Alliance.Blue) {
+      System.out.println("We are on the Blue Alliance!");
+    } else {
+      System.out.println("Alliance is unknown.");
+    }
+
+    // We want the mechanisms to be able to be manually controlled when the robot is disabled
+    // but they need to be in Brake mode when enabled so it holds position when being driven.
     // m_robotContainer.m_elevator.setBrakeMode(NeutralModeValue.Brake);
+    // m_robotContainer.m_launcherAngle.setBrakeMode(NeutralModeValue.Brake);
   }
 
   @Override

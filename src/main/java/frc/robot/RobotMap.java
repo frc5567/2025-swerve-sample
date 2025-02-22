@@ -8,15 +8,28 @@ package frc.robot;
 public class RobotMap {
 
   public static final class AngleMotorConstants {
-    public static final int LAUNCHER_ANGLE_MOTOR_PORT = 0;
+    public static final int LAUNCHER_ANGLE_MOTOR_PORT = 31;
 
-    // TODO: find correct value of tolerance in rotations.
+    public static final double OFFSET = -0.051270;
+
     public static final double ROTATION_TOLERANCE = 0.25;
 
-    public static final double INITIAL_ROTATION_COUNT = 15.0;
+    public static final double INITIAL_ROTATION_COUNT = 0.1;
 
-    public static final double INTAKE_ROTATION_COUNT = 7.5;
+    public static final double INTAKE_ROTATION_COUNT = 9.25;
 
-    public static final double LAUNCH_ROTATION_COUNT = 15.0;
+    public static final double LAUNCH_ROTATION_COUNT = 15.5;
+  }
+
+  public static final class ClimberConstants {
+    public static final int CLIMBER_WINCH_MOTOR_PORT = 32;
+
+    public static final double OFFSET = -5.281250;
+
+    public static final double INITIAL_ROTATION_COUNT = 0.1;
+
+    public static final double CLIMB_ROTATION_COUNT = 90.0;
+
+    public static final double ROTATION_TOLERANCE = 1.0;
   }
 }
