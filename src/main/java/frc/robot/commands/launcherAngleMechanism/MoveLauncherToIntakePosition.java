@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.launcherAngleMechanism;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -6,20 +6,20 @@ import frc.robot.RobotMap;
 import frc.robot.subsystems.LauncherAngleSubsystem;
 
 /**
- * A command that moves the launcher to the start position. The system has a 45:1 gear ratio, 8
- * degrees of output rotation per 360 degrees of motor rotation. Start position is 0 degrees, or 0
- * motor rotations
+ * A command that moves the launcher to the intake position. The system has a 45:1 gear ratio, 8
+ * degrees of output rotation per 360 degrees of motor rotation. Intake position is 60 degrees, or
+ * 7.5 motor rotations
  */
-public class MoveLauncherToStartPosition extends Command {
+public class MoveLauncherToIntakePosition extends Command {
 
   private final LauncherAngleSubsystem m_launchAngle;
 
   /**
-   * Creates a new MoveLauncherToLaunchPosition command.
+   * Creates a new MoveLauncherToIntakePosition command.
    *
    * @param launchAngle The launcher angle subsystem to use
    */
-  public MoveLauncherToStartPosition(LauncherAngleSubsystem launchAngle) {
+  public MoveLauncherToIntakePosition(LauncherAngleSubsystem launchAngle) {
     m_launchAngle = launchAngle;
     addRequirements(launchAngle);
   }
@@ -39,7 +39,7 @@ public class MoveLauncherToStartPosition extends Command {
    */
   @Override
   public void execute() {
-    m_launchAngle.setPositionInRotations(RobotMap.AngleMotorConstants.LAUNCH_ROTATION_COUNT);
+    m_launchAngle.setPositionInRotations(RobotMap.AngleMotorConstants.INTAKE_ROTATION_COUNT);
   }
 
   /**
@@ -56,9 +56,9 @@ public class MoveLauncherToStartPosition extends Command {
         "Current Position: ["
             + currentPosition
             + "] Target Position: ["
-            + RobotMap.AngleMotorConstants.INITIAL_ROTATION_COUNT
+            + RobotMap.AngleMotorConstants.INTAKE_ROTATION_COUNT
             + "]");
-    return Math.abs(currentPosition - RobotMap.AngleMotorConstants.INITIAL_ROTATION_COUNT)
+    return Math.abs(currentPosition - RobotMap.AngleMotorConstants.INTAKE_ROTATION_COUNT)
         < RobotMap.AngleMotorConstants.ROTATION_TOLERANCE;
   }
 
