@@ -76,11 +76,10 @@ public class ClimberWinchSubsystem implements Subsystem {
   }
 
   /**
-   * setPositionInPercentTravel drives the subsystem to the target position. We will translate to
-   * rotations to set the control using a PositionVoltage object.
+   * setPositionInRotations will move the climberWinch motor to the desired position in rotations of
+   * the winch motor (not the output).
    *
-   * @param rotations The distance from origin to request the system to move in rotations. A
-   *     setpoint.
+   * @param rotations The desired position in rotations.
    */
   public void setPositionInRotations(double rotations) {
     double desiredRotations = rotations - RobotMap.ClimberConstants.OFFSET;
