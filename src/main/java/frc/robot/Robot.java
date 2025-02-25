@@ -40,16 +40,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_alliance = DriverStation.getAlliance();
-
-    if (m_alliance.get() == Alliance.Red) {
-      System.out.println("We are on the Red Alliance!");
-    } else if (m_alliance.get() == Alliance.Blue) {
-      System.out.println("We are on the Blue Alliance!");
-    } else {
-      System.out.println("Alliance is unknown.");
-    }
-
     // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
   }
@@ -74,12 +64,15 @@ public class Robot extends TimedRobot {
      * of how to use vision should be tuned per-robot and to the team's specification.
      */
     if (kUseLimelight) {
-      if (m_alliance.get() == Alliance.Red) {
-        m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight");
-      } else if (m_alliance.get() == Alliance.Blue) {
-        m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-      }
+      m_alliance = DriverStation.getAlliance();
 
+      if (m_alliance.isPresent()) {
+        if (m_alliance.get() == Alliance.Red) {
+          m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight");
+        } else if (m_alliance.get() == Alliance.Blue) {
+          m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        }
+      }
       if ((m_curPoseEstimate != null)
           && !((m_curPoseEstimate.pose.getX() == 0) && (m_curPoseEstimate.pose.getY() == 0))) {
         m_robotContainer.m_drivetrain.addVisionMeasurement(
