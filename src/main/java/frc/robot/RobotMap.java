@@ -32,4 +32,10 @@ public class RobotMap {
 
     public static final double ROTATION_TOLERANCE = 1.0;
   }
+
+  public static final class ElevatorConstants {
+
+    public static final double POSITION_TOLERANCE = 10.0;
+
+  }
 }
