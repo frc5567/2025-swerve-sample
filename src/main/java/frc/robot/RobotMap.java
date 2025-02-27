@@ -36,6 +36,5 @@ public class RobotMap {
   public static final class ElevatorConstants {
 
     public static final double POSITION_TOLERANCE = 10.0;
-
   }
 }
