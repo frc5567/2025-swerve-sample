@@ -1,6 +1,7 @@
 package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotMap;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 /**
@@ -52,7 +53,8 @@ public class MoveElevatorToPosition extends Command {
     double currentPosition = m_elevatorSubsystem.getPositionInMillimeters();
     System.out.println(
         "Current Position: [" + currentPosition + "] Target Position: [" + m_targetPosition + "]");
-    return Math.abs(currentPosition - m_targetPosition) < 3; // within 5mm tolerance
+    return Math.abs(currentPosition - m_targetPosition)
+        < RobotMap.ElevatorConstants.POSITION_TOLERANCE;
   }
 
   /**

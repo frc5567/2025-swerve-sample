@@ -199,9 +199,7 @@ public class Robot extends TimedRobot {
   public void testExit() {}
 
   @Override
-  public void simulationInit() {
-    // PhysicsSim.getInstance().addTalonSRX(m_robotContainer.arm.getArmController(), 0.001);
-  }
+  public void simulationInit() {}
 
   @Override
   public void simulationPeriodic() {
