@@ -7,7 +7,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -40,8 +40,8 @@ public class ElevatorSubsystem implements Subsystem {
    */
   private final double kDistanceInMillimetersPerRotation = 10.477;
 
-  /* Start at position 0, use slot 0 */
-  private final PositionVoltage m_positionVoltage = new PositionVoltage(0).withSlot(0);
+  // create a Motion Magic request, voltage output
+  private final MotionMagicVoltage m_motionMagicVoltage = new MotionMagicVoltage(0).withSlot(0);
 
   /**
    * Elevator gains for default slot 0. Note that these values were not tuned and are just
@@ -68,6 +68,11 @@ public class ElevatorSubsystem implements Subsystem {
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
     configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    var motionMagicConfigs = configs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 80; // Target cruise velocity of 80 rps
+    motionMagicConfigs.MotionMagicAcceleration =
+        160; // Target acceleration of 160 rps/s (0.5 seconds)
+    motionMagicConfigs.MotionMagicJerk = 1600; // Target jerk of 1600 rps/s/s (0.1 seconds)
     configs.withSlot0(elevatorGains);
     m_elevatorMotor.getConfigurator().apply(configs);
   }
@@ -112,13 +117,13 @@ public class ElevatorSubsystem implements Subsystem {
 
   /**
    * setPositionInMillimeters drives the subsystem to the target position. We will translate to
-   * rotations to set the control using a PositionVoltage object.
+   * rotations to set the control using a MotionMagicVoltage object.
    *
    * @param distance The distance from origin to request the system to move. A setpoint.
    */
   public void setPositionInMillimeters(double distance) {
     double desiredRotations = distance / kDistanceInMillimetersPerRotation;
-    m_elevatorMotor.setControl(m_positionVoltage.withPosition(desiredRotations));
+    m_elevatorMotor.setControl(m_motionMagicVoltage.withPosition(desiredRotations));
     System.out.println(
         "Setting position to ["
             + distance
