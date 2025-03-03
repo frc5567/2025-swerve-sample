@@ -42,6 +42,8 @@ public class RobotContainer {
 
   private final CommandXboxController m_pilotController = new CommandXboxController(0);
 
+  private final CopilotGamePad m_copilotController = new CopilotGamePad(1);
+
   private final DutyCycleOut m_upOutput = new DutyCycleOut(0.0);
   private final DutyCycleOut m_downOutput = new DutyCycleOut(0.0);
   private final DutyCycleOut m_intakeOutput = new DutyCycleOut(0.0);

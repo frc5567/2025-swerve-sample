@@ -28,7 +28,7 @@ public class RobotMap {
 
     public static final double INITIAL_ROTATION_COUNT = 0.1;
 
-    public static final double CLIMB_ROTATION_COUNT = 90.0;
+    public static final double CLIMB_ROTATION_COUNT = 300.0;
 
     public static final double ROTATION_TOLERANCE = 1.0;
   }
