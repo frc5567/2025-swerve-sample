@@ -1,6 +1,6 @@
 // LimelightHelpers v1.9 (REQUIRES 2024.9.1)
 
-package frc.robot;
+package frc.robot.Helpers;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
@@ -602,7 +602,7 @@ public class LimelightHelpers {
         pose, adjustedTimestamp, latency, tagCount, tagSpan, tagDist, tagArea, rawFiducials);
   }
 
-  private static RawFiducial[] getRawFiducials(String limelightName) {
+  public static RawFiducial[] getRawFiducials(String limelightName) {
     var entry = LimelightHelpers.getLimelightNTTableEntry(limelightName, "rawfiducials");
     var rawFiducialArray = entry.getDoubleArray(new double[0]);
     int valsPerEntry = 7;
