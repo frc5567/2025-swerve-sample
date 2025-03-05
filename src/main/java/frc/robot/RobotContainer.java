@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,24 +22,19 @@ import frc.robot.subsystems.ClimberWinchSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 public class RobotContainer {
-  private double MaxSpeed =
-      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-  private double MaxAngularRate =
-      RotationsPerSecond.of(0.75)
-          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive =
       new SwerveRequest.FieldCentric()
-          .withDeadband(MaxSpeed * 0.1)
-          .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+          .withDeadband(RobotMap.DriveTrainConstants.MAX_SPEED * 0.1)
+          .withRotationalDeadband(
+              RobotMap.DriveTrainConstants.MAX_ANGULAR_RATE * 0.1) // Add a 10% deadband
           .withDriveRequestType(
               DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
   private final SwerveRequest.SwerveDriveBrake m_brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt m_point = new SwerveRequest.PointWheelsAt();
 
-  private final Telemetry m_logger = new Telemetry(MaxSpeed);
+  private final Telemetry m_logger = new Telemetry(RobotMap.DriveTrainConstants.MAX_SPEED);
 
   private final CommandXboxController m_pilotController = new CommandXboxController(0);
 
@@ -48,6 +44,8 @@ public class RobotContainer {
   private final DutyCycleOut m_downOutput = new DutyCycleOut(0.0);
   private final DutyCycleOut m_intakeOutput = new DutyCycleOut(0.0);
   private final DutyCycleOut m_launchOutput = new DutyCycleOut(0.0);
+
+  private Alliance m_allianceColor;
 
   public final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
 
@@ -63,7 +61,7 @@ public class RobotContainer {
     registerNamedCommands();
     m_autoChooser = AutoBuilder.buildAutoChooser("Tests");
     SmartDashboard.putData("Auto Mode", m_autoChooser);
-
+    m_allianceColor = Alliance.Red;
     configureBindings();
   }
 
@@ -72,6 +70,10 @@ public class RobotContainer {
     // NamedCommands.registerCommand("MoveElevatorTo180", new MoveElevatorToPosition(elevator,
     // 180));
     // NamedCommands.registerCommand("MoveElevatorTo0", new MoveElevatorToPosition(elevator, 0));
+  }
+
+  public void setAllianceColor(Alliance color) {
+    m_allianceColor = color;
   }
 
   private void configureBindings() {
@@ -84,13 +86,16 @@ public class RobotContainer {
                 drive
                     .withVelocityX(
                         -m_pilotController.getLeftY()
-                            * MaxSpeed) // Drive forward with negative Y (forward)
+                            * RobotMap.DriveTrainConstants
+                                .MAX_SPEED) // Drive forward with negative Y (forward)
                     .withVelocityY(
                         -m_pilotController.getLeftX()
-                            * MaxSpeed) // Drive left with negative X (left)
+                            * RobotMap.DriveTrainConstants
+                                .MAX_SPEED) // Drive left with negative X (left)
                     .withRotationalRate(
                         -m_pilotController.getRightX()
-                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                            * RobotMap.DriveTrainConstants
+                                .MAX_ANGULAR_RATE) // Drive counterclockwise with negative X (left)
             ));
 
     /*

@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -14,7 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.LimelightHelpers.PoseEstimate;
+import frc.robot.Helpers.LimelightHelpers;
+import frc.robot.Helpers.LimelightHelpers.PoseEstimate;
 import frc.robot.sim.PhysicsSim;
 import java.util.Optional;
 
@@ -42,18 +44,22 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Do this in either robot or subsystem init
     SmartDashboard.putData("Field", m_field);
+
+    // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
+    LimelightHelpers.setCameraPose_RobotSpace(
+        "",
+        0.2, // Forward offset (meters)
+        0.0, // Side offset (meters)
+        0.2, // Height offset (meters)
+        0.0, // Roll (degrees)
+        5.0, // Pitch (degrees)
+        0.0 // Yaw (degrees)
+        );
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    m_outputCounter++;
-    if (m_outputCounter >= 50) {
-      m_outputCounter = 0;
-      // Angle curAngle = m_robotContainer.m_launcherAngle.getPositionInRotations();
-      // double output = curAngle.magnitude();
-      // System.out.println("Launcher Position: Rotations [" + output + "]");
-    }
 
     /*
      * This example of adding Limelight is very simple and may not be sufficient for on-field use.
@@ -67,6 +73,7 @@ public class Robot extends TimedRobot {
       m_alliance = DriverStation.getAlliance();
 
       if (m_alliance.isPresent()) {
+        m_robotContainer.setAllianceColor(m_alliance.get());
         if (m_alliance.get() == Alliance.Red) {
           m_curPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiRed("limelight");
         } else if (m_alliance.get() == Alliance.Blue) {
@@ -90,6 +97,10 @@ public class Robot extends TimedRobot {
     if (curPose.isPresent()) {
       m_field.setRobotPose(curPose.get());
     }
+
+    LimelightHelpers.getBotPose_TargetSpace("limelight");
+
+    Translation2d targetTranslation = new Translation2d(1.0, 0.5);
   }
 
   @Override
@@ -111,7 +122,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     m_alliance = DriverStation.getAlliance();
-
+    m_robotContainer.setAllianceColor(m_alliance.get());
     if (m_alliance.get() == Alliance.Red) {
       System.out.println("We are on the Red Alliance!");
     } else if (m_alliance.get() == Alliance.Blue) {
@@ -148,7 +159,7 @@ public class Robot extends TimedRobot {
     }
 
     m_alliance = DriverStation.getAlliance();
-
+    m_robotContainer.setAllianceColor(m_alliance.get());
     if (m_alliance.get() == Alliance.Red) {
       System.out.println("We are on the Red Alliance!");
     } else if (m_alliance.get() == Alliance.Blue) {
@@ -178,6 +189,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
 
     m_alliance = DriverStation.getAlliance();
+    m_robotContainer.setAllianceColor(m_alliance.get());
     if (m_alliance.get() == Alliance.Red) {
       System.out.println("We are on the Red Alliance!");
     } else if (m_alliance.get() == Alliance.Blue) {
