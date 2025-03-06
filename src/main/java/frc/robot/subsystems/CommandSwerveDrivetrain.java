@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.RobotMap;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -305,10 +306,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             (720 * Math.PI / 180.0));
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    return AutoBuilder.pathfindToPose(
-        pose,
-        constraints,
-        edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-        );
+    Command returnCommand;
+
+    if (pose != null) {
+      returnCommand =
+          AutoBuilder.pathfindToPose(
+              pose,
+              constraints,
+              edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+              );
+    } else {
+      System.out.println("Failed to create the command, no pose");
+      returnCommand = this.getDefaultCommand();
+    }
+    return returnCommand;
+  }
+
+  public Pose2d getPose() {
+    double curTime = Utils.getCurrentTimeSeconds();
+    Pose2d curPose2d = new Pose2d();
+    Optional<Pose2d> curPose = samplePoseAt(curTime);
+    if (curPose.isPresent()) {
+      curPose2d = curPose.get();
+    }
+    return curPose2d;
   }
 }

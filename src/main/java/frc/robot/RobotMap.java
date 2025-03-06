@@ -322,6 +322,12 @@ public class RobotMap {
               Inches.of(6.5),
               Inches.of(0.0),
               new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
+      public static final Transform3d ROBOT_TRANSFORM =
+          new Transform3d(
+              Inches.of(13.0),
+              Inches.of(0.0),
+              Inches.of(0.0),
+              new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(180.0)));
     }
   }
 }
