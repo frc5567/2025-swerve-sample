@@ -15,7 +15,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Helpers.TargetPoseHelper;
 import frc.robot.commands.climber.ClimbCommand;
+import frc.robot.commands.compoundCommands.DriveToLeftBranch;
+import frc.robot.commands.compoundCommands.DriveToRightBranch;
 import frc.robot.generated.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimberWinchSubsystem;
@@ -54,6 +57,8 @@ public class RobotContainer {
   // public final LauncherAngleSubsystem m_launcherAngle = new LauncherAngleSubsystem();
   public final ClimberWinchSubsystem m_climberWinch = new ClimberWinchSubsystem();
 
+  public final TargetPoseHelper m_poseHelper = new TargetPoseHelper();
+
   /* Path follower */
   private final SendableChooser<Command> m_autoChooser;
 
@@ -73,7 +78,9 @@ public class RobotContainer {
   }
 
   public void setAllianceColor(Alliance color) {
-    m_allianceColor = color;
+    if (color != m_allianceColor) {
+      m_allianceColor = color;
+    }
   }
 
   private void configureBindings() {
@@ -173,6 +180,8 @@ public class RobotContainer {
     // m_pilotController.rightBumper().whileTrue(new MoveLauncherToStartPosition(m_launcherAngle));
 
     m_pilotController.a().whileTrue(new ClimbCommand(m_climberWinch));
+    m_pilotController.x().whileTrue(new DriveToLeftBranch(m_drivetrain));
+    m_pilotController.y().whileTrue(new DriveToRightBranch(m_drivetrain));
 
     m_drivetrain.registerTelemetry(m_logger::telemeterize);
   }

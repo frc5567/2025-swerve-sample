@@ -20,9 +20,8 @@ public class TargetPoseHelper {
   private static Pose2d m_redReefCenter = new Pose2d(0.0, 0.0, new Rotation2d());
   private static Pose2d m_blueReefCenter = new Pose2d(0.0, 0.0, new Rotation2d());
 
-  public TargetPoseHelper(Alliance allianceColor) {
+  public TargetPoseHelper() {
     m_fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-    m_allianceColor = allianceColor;
 
     // the difference between tag 18 and tag 21 is the center of the blue reef
     Pose2d blue1;
@@ -66,6 +65,12 @@ public class TargetPoseHelper {
     m_redReefCenter = new Pose2d(red2.getX() + diff / 2, red2.getY(), new Rotation2d());
   }
 
+  public void setAllianceColor(Alliance color) {
+    if (m_allianceColor != color) {
+      m_allianceColor = color;
+    }
+  }
+
   /**
    * Calculate the target pose for the robot to drive to.
    *
@@ -89,14 +94,17 @@ public class TargetPoseHelper {
         newPose =
             curTagPose
                 .get()
-                .transformBy(RobotMap.FieldConstants.FIELD_TRANSFORMS.m_rightCoralBranch);
+                .transformBy(RobotMap.FieldConstants.FIELD_TRANSFORMS.m_rightCoralBranch)
+                .transformBy(RobotMap.FieldConstants.FIELD_TRANSFORMS.ROBOT_TRANSFORM);
       } else {
         newPose =
             curTagPose
                 .get()
-                .transformBy(RobotMap.FieldConstants.FIELD_TRANSFORMS.m_leftCoralBranch);
+                .transformBy(RobotMap.FieldConstants.FIELD_TRANSFORMS.m_leftCoralBranch)
+                .transformBy(RobotMap.FieldConstants.FIELD_TRANSFORMS.ROBOT_TRANSFORM);
       }
     }
+    System.out.println("Calculate Target Pose: [" + newPose.getX() + "][" + newPose.getY() + "]");
     return newPose.toPose2d();
   }
 
@@ -141,7 +149,12 @@ public class TargetPoseHelper {
       //                                  c   *   * f
       //                                        *
       //
-
+      System.out.println(
+          "Trying to find nearest Reef face Pose: ["
+              + curPose.getX()
+              + "]["
+              + curPose.getY()
+              + "]");
       if (chassisX >= m_redReefCenter.getX()) {
         distance = CalcDistanceToAprilTag(RobotMap.FieldConstants.TAG_IDS.RED_REEF_AB_TAG, curPose);
         if (CalcDistanceToAprilTag(RobotMap.FieldConstants.TAG_IDS.RED_REEF_CD_TAG, curPose)
@@ -199,5 +212,16 @@ public class TargetPoseHelper {
     // Calculate the target pose
     return TargetPoseHelper.calculateTargetPose(
         curTag, RobotMap.FieldConstants.REEF_OFFSETS.RIGHT_BRANCH);
+  }
+
+  public Pose2d getTargetPoseForLeftReef(Pose2d curPose) {
+
+    RobotMap.FieldConstants.TAG_IDS curTag;
+
+    curTag = TargetPoseHelper.GetNearestReefTagID(curPose);
+
+    // Calculate the target pose
+    return TargetPoseHelper.calculateTargetPose(
+        curTag, RobotMap.FieldConstants.REEF_OFFSETS.LEFT_BRANCH);
   }
 }
