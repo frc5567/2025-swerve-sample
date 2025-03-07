@@ -300,7 +300,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // Create the constraints to use while pathfinding
     PathConstraints constraints =
         new PathConstraints(
-            RobotMap.DriveTrainConstants.MAX_SPEED/2,
+            RobotMap.DriveTrainConstants.MAX_SPEED / 2,
             4.0,
             RobotMap.DriveTrainConstants.MAX_ANGULAR_RATE,
             (720 * Math.PI / 180.0));
