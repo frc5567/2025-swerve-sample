@@ -313,13 +313,13 @@ public class RobotMap {
       public static final Transform3d m_leftCoralBranch =
           new Transform3d(
               Inches.of(0.0),
-              Inches.of(-6.5),
+              Inches.of(-7.5),
               Inches.of(0.0),
               new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
       public static final Transform3d m_rightCoralBranch =
           new Transform3d(
               Inches.of(0.0),
-              Inches.of(6.5),
+              Inches.of(5.5),
               Inches.of(0.0),
               new Rotation3d(Degrees.of(0.0), Degrees.of(0.0), Degrees.of(0.0)));
       public static final Transform3d ROBOT_TRANSFORM =
